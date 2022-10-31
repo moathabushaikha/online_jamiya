@@ -1,0 +1,69 @@
+{
+  "jamiyat": [
+    {
+      "id": 1,
+      "name": "family",
+      "maxParticipants": 14,
+      "participantsId": [
+        1,
+        3,
+        5
+      ],
+      "startingDate": "1/09/2022",
+      "endingDate": "1/1/2023",
+      "shareAmount": 50,
+      "creator": {
+        "id": "1",
+        "firstName": "Moath",
+        "lastName": "Abusheikha",
+        "profileImageUrl": "assets/profile_images/profile_image.png",
+        "darkMode": "false",
+        "registeredJamiyat": [1,2]
+      }
+    },
+    {
+      "id": 2,
+      "name": "Friends",
+      "maxParticipants": 15,
+      "participantsId": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "startingDate": "20/09/2022",
+      "endingDate": "20/1/2023",
+      "shareAmount": 25,
+      "creator": {
+        "id": "2",
+        "firstName": "Razan",
+        "lastName": "AbdElHaq",
+        "profileImageUrl": "assets/profile_images/profile_image.png",
+        "darkMode": "false",
+        "registeredJamiyat": [1]
+      }
+    },
+    {
+      "id": 3,
+      "name": "Friends2",
+      "maxParticipants": 7,
+      "participantsId": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "startingDate": "1/04/2022",
+      "endingDate": "1/9/2022",
+      "shareAmount": 100,
+      "creator": {
+        "id": "3",
+        "firstName": "Mahmoud",
+        "lastName": "Abusheikha",
+        "profileImageUrl": "assets/profile_images/profile_image.png",
+        "darkMode": "false",
+        "registeredJamiyat": [3]
+      }
+    }
+  ]
+}

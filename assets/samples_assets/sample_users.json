@@ -1,0 +1,35 @@
+{
+	"users" :[
+	{
+		"firstName": "Ahmed",
+		"lastName":"Abusheikha",
+		"profileImageUrl":"",
+		"darkMode":true
+	},
+	{
+		"firstName": "Khalid",
+		"lastName":"Nazzal",
+		"profileImageUrl":"",
+		"darkMode":false
+	},
+	{
+		"firstName": "Yazeed",
+		"lastName":"Nazzal",
+		"profileImageUrl":"",
+		"darkMode":false
+	},
+	{
+		"firstName": "Layla",
+		"lastName":"Nazzal",
+		"profileImageUrl":"",
+		"darkMode":true
+	},
+	{
+		"firstName": "Razan",
+		"lastName":"Abdelhaq",
+		"profileImageUrl":"",
+		"darkMode":true
+	},
+		
+	]
+}

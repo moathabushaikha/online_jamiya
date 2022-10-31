@@ -1,0 +1,95 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:online_jamiya/models/models.dart';
+import 'screens.dart';
+
+class Home extends StatefulWidget {
+  final int currentTab;
+  const Home({Key? key,required this.currentTab}) : super(key: key);
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  User? currentUser;
+  AppCache _appCache = AppCache();
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentUser();
+  }
+  @override
+  Widget build(BuildContext context) {
+    print('home is called');
+    List<Widget> pages = <Widget>[
+      MainScreen(currentUser: currentUser),
+      ExploreScreen(currentUser: currentUser),
+    ];
+    Widget profileButton(int currentTab) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: GestureDetector(
+          child: const CircleAvatar(
+            backgroundColor: Colors.transparent,
+            backgroundImage: AssetImage(
+              'assets/profile_images/profile_image.png',
+            ),
+          ),
+          onTap: () {
+            context.goNamed('profile', params: {
+              'tab': '$currentTab',
+            });
+          },
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        actions: [profileButton(widget.currentTab)],
+        title: Text(
+          'جمعية اونلاين',
+          style: Theme.of(context).textTheme.headline2,
+          textAlign: TextAlign.center,
+        ),
+      ),
+      body: IndexedStack(
+        index: widget.currentTab,
+        children: pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Theme.of(context).textSelectionTheme.selectionColor,
+        currentIndex: widget.currentTab,
+        onTap: (index) {
+          Provider.of<AppStateManager>(context, listen: false).goToTab(index);
+          context.goNamed(
+            'home',
+            params: {
+              'tab': '$index',
+            },
+          );
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'الرئيسية',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.explore),
+            label: 'الجمعيات',
+          ),
+        ],
+      ),
+    );
+  }
+
+  void getCurrentUser() async{
+    User? cUser = await _appCache.getCurrentUser();
+    setState(() {
+      currentUser = cUser;
+    });
+  }
+}
