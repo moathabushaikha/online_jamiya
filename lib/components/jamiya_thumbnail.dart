@@ -10,7 +10,7 @@ class JamiyaThumbnail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(jamiya?.participantsId);
-    var x =  jamiya?.participantsId.length as int;
+    var x =  jamiya?.participantsId?.length as int;
     var y = jamiya?.shareAmount as int;
     int jamiyaAmount = x * y;
     return Ink(
@@ -47,7 +47,7 @@ class JamiyaThumbnail extends StatelessWidget {
               top: 46,
               left: 6,
               child: Text(
-                'Participants: ${jamiya?.participantsId.length}',
+                'Participants: ${jamiya?.participantsId?.length}',
                 style: Theme.of(context).textTheme.headline3,
               ),
             ),

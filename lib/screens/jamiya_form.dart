@@ -21,7 +21,7 @@ class _JamiyaFormState extends State<JamiyaForm> {
   final TextEditingController _shareAmount = TextEditingController();
   final TextEditingController _maxParticipants = TextEditingController();
   DateTime dateTimeFrom = DateTime.now();
-  AppCache _appCache = AppCache();
+  final AppCache _appCache = AppCache();
   User? currentUser;
 
   @override

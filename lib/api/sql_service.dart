@@ -26,7 +26,10 @@ class SqlService {
   Future<List<Jamiya>?> getRegisteredJamiyas(List<String>? jamiyaIDs)async
   {
     List<Jamiya> registeredJamiyas = [];
-    int listLength = jamiyaIDs?.length as int;
+    int listLength = 0;
+    if (jamiyaIDs!=null) {
+      listLength= jamiyaIDs.length;
+    }
     for(var i =0; i<listLength;i++) {
       String id = jamiyaIDs![i];
       var element = await DataBaseConn.instance.readJamiya(id);

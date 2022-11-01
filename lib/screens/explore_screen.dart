@@ -28,12 +28,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
               itemCount: manager.jamiyaItems.length,
               padding: const EdgeInsets.all(10),
               itemBuilder: (context, index) {
-                // print(
-                //     'parti. jam ${manager.jamiyaItems[index].name}'
-                //         ' ${manager.jamiyaItems[index].participantsId}');
                 DateTime startDate = manager.jamiyaItems[index].startingDate;
-                int numberOfParticipants =
-                    manager.jamiyaItems[index].participantsId.length;
+                int numberOfParticipants = int.parse(
+                    '${manager.jamiyaItems[index].participantsId?.length}');
                 DateTime endDate =
                     startDate.add(Duration(days: 30 * numberOfParticipants));
                 // updating Jamiya ending date
@@ -48,7 +45,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   onTap: () {
                     context.goNamed(
                       'jamiya',
-                      params: {'tab': '1', 'selectedJamiyaId': '${index + 1}'},
+                      params: {'tab': '1', 'selectedJamiyaId': '$index'},
                     );
                   },
                   child: Card(
@@ -120,21 +117,24 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             ),
                           ],
                         ),
-                        Row(children: [
-                          Text('participants : ${manager.jamiyaItems[index].participantsId}')
-                        ],),
+                        Row(
+                          children: [
+                            Text(
+                                'participants : ${manager.jamiyaItems[index].participantsId}')
+                          ],
+                        ),
                         ElevatedButton(
                           onPressed: () {
-                            List<String> pressedJamiyaRegUsers =
+                            // register current user to selected jamiya
+                            List<String> participants =
                                 manager.jamiyaItems[index].participantsId;
-                            String a = pressedJamiyaRegUsers.join(',');
-                            String cuId = widget.currentUser!.id;
-                            print('$cuId:$a:');
-                            a += cuId;
-                            print('$cuId:$a:');
-                            pressedJamiyaRegUsers = a.split(",");
-                            print('$cuId:$a:$pressedJamiyaRegUsers`');
-                           //else{pressedJamiyaRegUsers.removeLast();}
+                            if (!participants
+                                .contains(widget.currentUser?.id)) {
+                              participants
+                                  .removeWhere((element) => element == '');
+                              participants.add('${widget.currentUser?.id}');
+                              manager.updateItem(manager.jamiyaItems[index],index);
+                            }
                           },
                           child: const Text('Enroll'),
                         ),
@@ -171,7 +171,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  void fillJamiyat(manager) async{
+  void fillJamiyat(manager) async {
     await manager.getJamiyat();
   }
 }

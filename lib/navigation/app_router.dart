@@ -68,7 +68,8 @@ class AppRouter {
                 return JamiyaView(
                   user: profileManager.getUser,
                   currentTab: tab,
-                  selectedJamiyaId: selectedJamiyaId,
+                  selectedJamiyaIndex: selectedJamiyaId,
+                    manager: jamiyaManager,
                 );
               }),
         ],

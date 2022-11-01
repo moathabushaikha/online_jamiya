@@ -135,8 +135,9 @@ class DataBaseConn {
 
   Future<int> updateJamiya(Jamiya jamiya) async {
     final db = await instance.database;
-    return db.update(jamiyaTableName, jamiya.toMap(),
+    int count = await db.update(jamiyaTableName, jamiya.toMap(),
         where: '${JamiyaTable.id} = ?', whereArgs: [jamiya.id]);
+    return count;
   }
 
   Future<int> deleteJamiya(String id) async {

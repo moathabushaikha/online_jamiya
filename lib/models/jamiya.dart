@@ -35,7 +35,7 @@ class Jamiya {
       JamiyaTable.endingDate: formatter.format(endingDate),
       JamiyaTable.shareAmount: shareAmount.toString(),
       JamiyaTable.maxParticipants: maxParticipants.toString(),
-      JamiyaTable.participantsId: participantsId.join(','),
+      JamiyaTable.participantsId: participantsId ?? '',
       JamiyaTable.creatorId: creatorId,
     };
     return map;
@@ -57,9 +57,17 @@ class Jamiya {
 
   factory Jamiya.fromMap(Map<String, dynamic> json) {
     String cid = json['id'].toString();
+    List<String> participants = [];
+    if (json[JamiyaTable.participantsId].runtimeType == String) {
+      participants = json[JamiyaTable.participantsId].split(',');
+    } else {
+      for (var element in json[JamiyaTable.participantsId]) {
+        participants.add(element.toString());
+      }
+    }
     return Jamiya(
       cid,
-      json[JamiyaTable.participantsId].split(','),
+      participants,
       name: json[JamiyaTable.name],
       maxParticipants: int.parse(json[JamiyaTable.maxParticipants]),
       startingDate: DateTime.parse(json[JamiyaTable.startingDate]),

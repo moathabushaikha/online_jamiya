@@ -20,7 +20,8 @@ class AppCache {
     final prefs = await SharedPreferences.getInstance();
     List<String> jamiyaItemsList = [];
     for (var element in allJamiyat!) {
-      jamiyaItemsList.add(jamiyaToMap(element));
+      var stringElement = jamiyaToMap(element);
+      jamiyaItemsList.add(stringElement);
     }
     prefs.setStringList(allJamiyas, jamiyaItemsList);
   }
@@ -30,7 +31,7 @@ class AppCache {
     var x = prefs.getStringList(allJamiyas);
     List<Jamiya> jamiyat = [];
     if (x != null) {
-      for (var element in x!) {
+      for (var element in x) {
         jamiyat.add(jamiyaFromJson(element));
       }
     }

@@ -4,13 +4,17 @@ import 'package:online_jamiya/api/api.dart';
 import 'package:online_jamiya/models/models.dart';
 
 class JamiyaView extends StatefulWidget {
-  final int selectedJamiyaId;
+  final int selectedJamiyaIndex;
+  final JamiyaManager manager;
+  final User? user;
+  int? currentTab;
 
-  const JamiyaView(
+  JamiyaView(
       {Key? key,
-      required User? user,
-      required int currentTab,
-      required this.selectedJamiyaId})
+      required this.user,
+      required this.currentTab,
+      required this.selectedJamiyaIndex,
+      required this.manager})
       : super(key: key);
 
   @override
@@ -18,33 +22,20 @@ class JamiyaView extends StatefulWidget {
 }
 
 class _JamiyaViewState extends State<JamiyaView> {
-  SqlService sqlService = SqlService();
-  Jamiya? selectedJamiya;
-
-  @override
-  void initState() {
-    getJamiyaById();
-    super.initState();
-  }
-
-  Future<void> getJamiyaById() async {
-    selectedJamiya =
-        await sqlService.readSingleJamiya(widget.selectedJamiyaId.toString());
-    setState(() {
-      selectedJamiya;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    widget.manager.getJamiyat();
     String formattedSDate = DateFormat('dd/MM/yy').format(DateTime.now());
     String formattedEDate = DateFormat('dd/MM/yy').format(DateTime.now());
-    if (selectedJamiya != null) {
-      DateTime sDate = selectedJamiya!.startingDate;
-      formattedSDate = DateFormat('dd/MM/yy').format(sDate);
-      DateTime eDate = selectedJamiya!.endingDate;
-      formattedEDate = DateFormat('dd/MM/yy').format(eDate);
-    }
+    int participants = 1;
+    Jamiya selectedJamiya =
+        widget.manager.jamiyaItems[widget.selectedJamiyaIndex];
+
+    DateTime sDate = selectedJamiya.startingDate;
+    formattedSDate = DateFormat('dd/MM/yy').format(sDate);
+    DateTime eDate = selectedJamiya.endingDate;
+    formattedEDate = DateFormat('dd/MM/yy').format(eDate);
+    participants = int.parse('${selectedJamiya.participantsId.length}');
 
     return Scaffold(
       appBar: AppBar(),
@@ -56,27 +47,22 @@ class _JamiyaViewState extends State<JamiyaView> {
             style: Theme.of(context).textTheme.headline1,
           )),
           Expanded(
-            child: selectedJamiya != null
-                ? ListView(
-                    children: [
-                      buildDataContainer('رقم الجمعية', selectedJamiya!.id),
-                      buildDataContainer('اسم الجمعية', selectedJamiya!.name),
-                      buildDataContainer(
-                          'المشتركين الجمعية', selectedJamiya!.participantsId),
-                      buildDataContainer(
-                          'قيمة السهم الجمعية', selectedJamiya!.shareAmount),
-                      buildDataContainer('تبدأ في', formattedSDate),
-                      buildDataContainer('تنتهي في', formattedEDate),
-                      buildDataContainer(
-                          'انشات عن طريق', selectedJamiya!.creatorId),
-                      buildDataContainer(
-                          'قيمة الجمعية',
-                          selectedJamiya!.shareAmount *
-                              selectedJamiya!.participantsId.length),
-                    ],
-                  )
-                : const Text('لا يوجد لديك اي جمعيات'),
-          )
+            child: ListView(
+              children: [
+                buildDataContainer('رقم الجمعية', selectedJamiya.id),
+                buildDataContainer('اسم الجمعية', selectedJamiya.name),
+                buildDataContainer(
+                    'المشتركين الجمعية', selectedJamiya.participantsId),
+                buildDataContainer(
+                    'قيمة السهم الجمعية', selectedJamiya.shareAmount),
+                buildDataContainer('تبدأ في', formattedSDate),
+                buildDataContainer('تنتهي في', formattedEDate),
+                buildDataContainer('انشات عن طريق', selectedJamiya.creatorId),
+                buildDataContainer(
+                    'قيمة الجمعية', selectedJamiya!.shareAmount * participants),
+              ],
+            ),
+          ),
         ],
       ),
     );
