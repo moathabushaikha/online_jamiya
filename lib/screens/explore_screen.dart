@@ -40,6 +40,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 String formattedSDate =
                     DateFormat('dd/MM/yy').format(startDate);
                 String formattedEDate = DateFormat('dd/MM/yy').format(endDate);
+                // ToDo add initstate add this 2 lines
+                // int creatorId = int.parse('${manager.jamiyaItems[index].creatorId}');
+                // String creatorName = sqlService.readSingleUser(creatorId);
 
                 return InkWell(
                   onTap: () {
@@ -124,16 +127,25 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           ],
                         ),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async{
                             // register current user to selected jamiya
                             List<String> participants =
                                 manager.jamiyaItems[index].participantsId;
+                            List<String>? userJamiyat = widget.currentUser?.registeredJamiyaID;
                             if (!participants
                                 .contains(widget.currentUser?.id)) {
                               participants
                                   .removeWhere((element) => element == '');
+                              userJamiyat
+                                  ?.removeWhere((element) => element == '');
                               participants.add('${widget.currentUser?.id}');
-                              manager.updateItem(manager.jamiyaItems[index],index);
+                              DateTime endDate =
+                              startDate.add(Duration(days: 30 * participants.length));
+                              // updating Jamiya ending date
+                              manager.jamiyaItems[index].endingDate = endDate;
+                              await manager.updateItem(manager.jamiyaItems[index],index);
+                              widget.currentUser?.registeredJamiyaID.add(manager.jamiyaItems[index].id);
+                              await AppStateManager().updateUser(widget.currentUser!);
                             }
                           },
                           child: const Text('Enroll'),

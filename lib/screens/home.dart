@@ -14,7 +14,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   User? currentUser;
-  AppCache _appCache = AppCache();
+  final AppCache _appCache = AppCache();
+  JamiyaManager manager = JamiyaManager();
+  List<Jamiya>? userRegisteredJamiyas;
 
   @override
   void initState() {
@@ -23,10 +25,12 @@ class _HomeState extends State<Home> {
   }
   @override
   Widget build(BuildContext context) {
-    print('home is called');
+   // if (userRegisteredJamiyas == null){ getRegJamiyat();}
     List<Widget> pages = <Widget>[
-      MainScreen(currentUser: currentUser),
-      ExploreScreen(currentUser: currentUser),
+      Consumer2 <AppStateManager, JamiyaManager> (builder: (context,appStateManager,jamiyaManager,child){
+        return MainScreen(currentUser: currentUser,appStateManager:appStateManager,jamiyaManager:jamiyaManager);
+      },),
+      ExploreScreen(currentUser: currentUser,),
     ];
     Widget profileButton(int currentTab) {
       return Padding(

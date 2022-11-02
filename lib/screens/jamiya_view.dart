@@ -29,7 +29,7 @@ class _JamiyaViewState extends State<JamiyaView> {
     String formattedEDate = DateFormat('dd/MM/yy').format(DateTime.now());
     int participants = 1;
     Jamiya selectedJamiya =
-        widget.manager.jamiyaItems[widget.selectedJamiyaIndex];
+        widget.manager.jamiyaItems[widget.selectedJamiyaIndex-1];
 
     DateTime sDate = selectedJamiya.startingDate;
     formattedSDate = DateFormat('dd/MM/yy').format(sDate);

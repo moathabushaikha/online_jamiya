@@ -23,17 +23,16 @@ class SqlService {
   Future<Jamiya> readSingleJamiya(String id)async{
     return await DataBaseConn.instance.readJamiya(id);
   }
-  Future<List<Jamiya>?> getRegisteredJamiyas(List<String>? jamiyaIDs)async
+  Future<List<Jamiya>> getRegisteredJamiyas(User? currentUser)async
   {
     List<Jamiya> registeredJamiyas = [];
-    int listLength = 0;
-    if (jamiyaIDs!=null) {
-      listLength= jamiyaIDs.length;
-    }
-    for(var i =0; i<listLength;i++) {
-      String id = jamiyaIDs![i];
-      var element = await DataBaseConn.instance.readJamiya(id);
-      registeredJamiyas.add(element);
+    List<Jamiya> allJamiyas = await DataBaseConn.instance.allJamiyas();
+    for (var jamiya in allJamiyas){
+      if (currentUser != null){
+        if (currentUser.registeredJamiyaID.contains(jamiya.id)){
+          registeredJamiyas.add(jamiya);
+        }
+      }
     }
     return registeredJamiyas;
   }

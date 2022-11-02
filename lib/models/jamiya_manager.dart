@@ -41,13 +41,12 @@ class JamiyaManager extends ChangeNotifier {
     int newJamiyaId = await sqlService.createJamiya(item);
     Jamiya newJamiya =
         await sqlService.readSingleJamiya(newJamiyaId.toString());
-    print('new jamiya participants: ${newJamiya.participantsId}');
     _jamiyaItems?.add(newJamiya);
     _appCache.setJamiyat(_jamiyaItems!);
     notifyListeners();
   }
 
-  void updateItem(Jamiya jamiyaItem,index) async {
+  Future<void> updateItem(Jamiya jamiyaItem,index) async {
     await sqlService.updateJamiya(jamiyaItem);
     Jamiya updatedJamiya = await sqlService.readSingleJamiya(jamiyaItem.id);
     _jamiyaItems![index] = updatedJamiya;

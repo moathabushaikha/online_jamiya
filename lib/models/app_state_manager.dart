@@ -15,7 +15,6 @@ class AppStateManager extends ChangeNotifier {
   User? _currentUser;
   bool _loggedIn = false;
   int _selectedTab = JamiyaTabs.mainScreen;
-
   bool get isLoggedIn => _loggedIn;
   int get getSelectedTab => _selectedTab;
   User? get currentUser => _currentUser;
@@ -29,9 +28,14 @@ class AppStateManager extends ChangeNotifier {
     _selectedTab = index;
     notifyListeners();
   }
+  Future<void> updateUser(User user)async{
+    await sqlService.updateUser(user);
+    _appCache.setCurrentUser(user);
+    notifyListeners();
+  }
   void register(User registeredUser) async {
-    int id = await SqlService().createUser(registeredUser);
-    User? userFromDb = await SqlService().readSingleUser(id);
+    int id = await sqlService.createUser(registeredUser);
+    User? userFromDb = await sqlService.readSingleUser(id);
      _appCache.setCurrentUser(userFromDb);
     _loggedIn = true;
     notifyListeners();

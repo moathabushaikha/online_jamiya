@@ -4,44 +4,42 @@ import 'package:online_jamiya/components/components.dart';
 import 'package:online_jamiya/models/models.dart';
 
 class MainScreen extends StatefulWidget {
-  User? currentUser;
-
-  MainScreen({Key? key, required this.currentUser}) : super(key: key);
+  final User? currentUser;
+  final JamiyaManager jamiyaManager;
+  final AppStateManager appStateManager;
+  const MainScreen({Key? key, required this.currentUser, required this.appStateManager,required this.jamiyaManager}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  List<Jamiya>? userRegisteredJamiyas;
-
-  @override
-  void initState() {
-    super.initState();
-    getRegJamiyat();
-  }
+  SqlService sqlService = SqlService();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        MainImageHolder(cUser: widget.currentUser),
-        Expanded(
-          child: widget.currentUser?.registeredJamiyaID.length != 0
-              ? RegisteredJamiyaGridView(
-              userRegisteredJamiyas: userRegisteredJamiyas)
-              : Text('no jamiyas'),
-        ),
-      ],
+    return FutureBuilder(
+      future:  sqlService.getRegisteredJamiyas(widget.currentUser),
+      builder: (BuildContext context, AsyncSnapshot<List<Jamiya>> snapShot){
+          if (snapShot.connectionState == ConnectionState.done){
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                MainImageHolder(cUser: widget.currentUser),
+                Expanded(
+                  child: widget.currentUser?.registeredJamiyaID.length != 0
+                      ? RegisteredJamiyaGridView(
+                      userRegisteredJamiyas: snapShot.data)
+                      : const Text('غير مشترك باي جمعية'),
+                ),
+              ],
+            );
+          }else {
+            return const Text('غير مشترك باي جمعية');
+          }
+      },
     );
-  }
 
-  void getRegJamiyat() async {
-    List<Jamiya>? allRegJamiyas = await SqlService()
-        .getRegisteredJamiyas(widget.currentUser?.registeredJamiyaID);
-    setState(() {
-      userRegisteredJamiyas = allRegJamiyas;
-    });
   }
 }
+
