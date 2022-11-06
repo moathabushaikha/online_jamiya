@@ -14,6 +14,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
   String userName = '', password = '';
+  bool obscureField = true;
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +37,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               // user name
               TextFormField(
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: 'User Name'),
-                onSaved: (value) {
-                  setState(() {
-                    userName = value!;
-                  });
-                },
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.person),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  labelText: 'User Name',
+                ),
+                onSaved: (value) => setState(() => userName = value!),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter user name';
@@ -55,14 +57,21 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               // password
               TextFormField(
-                obscureText: true,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(), labelText: 'Password'),
-                onSaved: (value) {
-                  setState(() {
-                    password = value!;
-                  });
-                },
+                obscureText: obscureField,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.password),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  labelText: 'Password',
+                  hintText: 'password',
+                  suffixIcon: IconButton(
+                    onPressed: () =>
+                        setState(() => obscureField = !obscureField),
+                    icon: const Icon(Icons.remove_red_eye_outlined),
+                  ),
+                ),
+                onSaved: (value) => setState(() => password = value!),
                 validator: (value) {
                   if (value == null || value.isEmpty || value.length < 6) {
                     return 'password cannot be empty or shorter than 6 characters ';
@@ -74,9 +83,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 32,
               ),
               ElevatedButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: const BorderSide(color: Colors.black),
+                    ),
+                  ),
+                ),
                 onPressed: () {
                   final isValid = formKey.currentState?.validate();
-                  if(isValid!) {
+                  if (isValid!) {
                     formKey.currentState?.save();
                     return Provider.of<AppStateManager>(context, listen: false)
                         .login(userName, password);

@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future:  sqlService.getRegisteredJamiyas(widget.currentUser),
+      future:  sqlService.getUserRegisteredJamiyas(widget.currentUser),
       builder: (BuildContext context, AsyncSnapshot<List<Jamiya>> snapShot){
           if (snapShot.connectionState == ConnectionState.done){
             return Column(

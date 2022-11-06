@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:online_jamiya/api/api.dart';
 import 'package:online_jamiya/models/models.dart';
 
 class JamiyaView extends StatefulWidget {
