@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:online_jamiya/models/models.dart';
+import '../theme.dart';
 import 'screens.dart';
 
 class Home extends StatefulWidget {
   final int currentTab;
-  const Home({Key? key,required this.currentTab}) : super(key: key);
+
+  const Home({Key? key, required this.currentTab}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -23,14 +25,21 @@ class _HomeState extends State<Home> {
     super.initState();
     getCurrentUser();
   }
+
   @override
   Widget build(BuildContext context) {
-   // if (userRegisteredJamiyas == null){ getRegJamiyat();}
     List<Widget> pages = <Widget>[
-      Consumer2 <AppStateManager, JamiyaManager> (builder: (context,appStateManager,jamiyaManager,child){
-        return MainScreen(currentUser: currentUser,appStateManager:appStateManager,jamiyaManager:jamiyaManager);
-      },),
-      ExploreScreen(currentUser: currentUser,),
+      Consumer2<AppStateManager, JamiyaManager>(
+        builder: (context, appStateManager, jamiyaManager, child) {
+          return MainScreen(
+              currentUser: currentUser,
+              appStateManager: appStateManager,
+              jamiyaManager: jamiyaManager);
+        },
+      ),
+      ExploreScreen(
+        currentUser: currentUser,
+      ),
     ];
     Widget profileButton(int currentTab) {
       return Padding(
@@ -43,9 +52,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           onTap: () {
-            context.goNamed('profile', params: {
-              'tab': '$currentTab'
-            });
+            context.goNamed('profile', params: {'tab': '$currentTab'});
           },
         ),
       );
@@ -64,33 +71,38 @@ class _HomeState extends State<Home> {
         index: widget.currentTab,
         children: pages,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Theme.of(context).textSelectionTheme.selectionColor,
-        currentIndex: widget.currentTab,
-        onTap: (index) {
-          Provider.of<AppStateManager>(context, listen: false).goToTab(index);
-          context.goNamed(
-            'home',
-            params: {
-              'tab': '$index',
-            },
-          );
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'الرئيسية',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: 'الجمعيات',
-          ),
-        ],
-      ),
+      bottomNavigationBar:
+          Consumer<ProfileManager>(builder: (context, profMngr, child) {
+        return BottomNavigationBar(
+          selectedItemColor: profMngr.darkMode
+              ? JamiyaTheme.dark().backgroundColor
+              : JamiyaTheme.light().backgroundColor,
+          currentIndex: widget.currentTab,
+          onTap: (index) {
+            Provider.of<AppStateManager>(context, listen: false).goToTab(index);
+            context.goNamed(
+              'home',
+              params: {
+                'tab': '$index',
+              },
+            );
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.book),
+              label: 'الرئيسية',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.explore),
+              label: 'الجمعيات',
+            ),
+          ],
+        );
+      }),
     );
   }
 
-  void getCurrentUser() async{
+  void getCurrentUser() async {
     User? cUser = await _appCache.getCurrentUser();
     setState(() {
       currentUser = cUser;
