@@ -44,7 +44,7 @@ class _HomeState extends State<Home> {
           ),
           onTap: () {
             context.goNamed('profile', params: {
-              'tab': '$currentTab',
+              'tab': '$currentTab'
             });
           },
         ),

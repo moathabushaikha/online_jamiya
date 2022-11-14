@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:online_jamiya/api/api.dart';
 import 'models.dart';
 
 class ProfileManager extends ChangeNotifier {
-  User? get getUser => AppStateManager().currentUser;
+  SqlService sqlService = SqlService();
   bool get didSelectUser => _didSelectUser;
 
   bool get darkMode => _darkMode;
@@ -12,6 +13,11 @@ class ProfileManager extends ChangeNotifier {
 
   set darkMode(bool darkMode) {
     _darkMode = darkMode;
+    notifyListeners();
+  }
+  void setUserDarkMode(User user)async
+  {
+    _darkMode = user.darkMode;
     notifyListeners();
   }
 

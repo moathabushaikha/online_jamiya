@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:go_router/go_router.dart';
+import 'package:online_jamiya/theme.dart';
+import 'package:provider/provider.dart';
 
 class JamiyaForm extends StatefulWidget {
   final Function(Jamiya) onCreate;
@@ -120,30 +122,34 @@ class _JamiyaFormState extends State<JamiyaForm> {
                   .of(context)
                   .size
                   .width / 4,
-              child: MaterialButton(
-                color: Colors.green,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: const Text(
-                  'create jamiya',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  Jamiya newJamiya = Jamiya(
-                    '1',
-                    [],
-                    name: _jamiyaName.text,
-                    startingDate: dateTimeFrom,
-                    endingDate: dateTimeFrom,
-                    maxParticipants:
-                    int.parse(_maxParticipants.text.toString()),
-                    creatorId: currentUser?.id,
-                    shareAmount: int.parse(_shareAmount.text),
+              child: Consumer<ProfileManager>(
+                builder: (context,profileManager,child){
+                  return MaterialButton(
+                    color: profileManager.darkMode ? JamiyaTheme.dark().backgroundColor : JamiyaTheme.light().backgroundColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: const Text(
+                      'create jamiya',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      Jamiya newJamiya = Jamiya(
+                        '1',
+                        [],
+                        name: _jamiyaName.text,
+                        startingDate: dateTimeFrom,
+                        endingDate: dateTimeFrom,
+                        maxParticipants:
+                        int.parse(_maxParticipants.text.toString()),
+                        creatorId: currentUser?.id,
+                        shareAmount: int.parse(_shareAmount.text),
+                      );
+                      widget.onCreate(newJamiya);
+                      context.goNamed('home',
+                          params: {'tab': '${JamiyaTabs.explore}'});
+                    },
                   );
-                  widget.onCreate(newJamiya);
-                  context.goNamed('home',
-                      params: {'tab': '${JamiyaTabs.explore}'});
                 },
               ),
             )

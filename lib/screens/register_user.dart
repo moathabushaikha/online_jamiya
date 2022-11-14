@@ -135,6 +135,7 @@ class _RegisterUserState extends State<RegisterUser> {
                     registeredJamiyaID: [],
                     imgUrl: '',
                   );
+                  // Provider.of<ProfileManager>(context, listen: false).setUserDarkMode(user);
                   Provider.of<AppStateManager>(context, listen: false)
                       .register(user);
                 }

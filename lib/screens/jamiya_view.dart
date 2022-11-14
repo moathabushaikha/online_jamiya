@@ -5,12 +5,11 @@ import 'package:online_jamiya/models/models.dart';
 class JamiyaView extends StatefulWidget {
   final int selectedJamiyaIndex;
   final JamiyaManager manager;
-  final User? user;
+
   int? currentTab;
 
   JamiyaView(
       {Key? key,
-      required this.user,
       required this.currentTab,
       required this.selectedJamiyaIndex,
       required this.manager})

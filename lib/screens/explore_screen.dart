@@ -68,10 +68,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         ),
                         Positioned(
                           left: 50,
-                            child: FutureBuilder(
-                              future: sqlService.readSingleUser(int.parse(manager.jamiyaItems[index].creatorId.toString())),
-                              builder: (context, snapshot) => Text('${snapshot.data?.firstName} ${snapshot.data?.lastName}'),
-                            ),
+                          child: FutureBuilder(
+                            future: sqlService.readSingleUser(int.parse(manager
+                                .jamiyaItems[index].creatorId
+                                .toString())),
+                            builder: (context, snapshot) => Text(
+                                '${snapshot.data?.firstName} ${snapshot.data?.lastName}'),
+                          ),
                         ),
                         Positioned(
                           left: 50,
@@ -111,7 +114,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         Positioned(
                           bottom: 0,
                           left: 50,
-                          child: ElevatedButton(
+                          child: MaterialButton(
+                            color: Colors.green,
                             onPressed: () async {
                               // register current user to selected jamiya
                               List<String> participants =
@@ -188,17 +192,25 @@ class _ExploreScreenState extends State<ExploreScreen> {
         },
       ),
       bottomNavigationBar: BottomAppBar(
-          elevation: 5,
-          child: ElevatedButton(
-            onPressed: () => context.goNamed('newJamiya', params: {'tab': '1'}),
-            style: ElevatedButton.styleFrom(
-              shape: const CircleBorder(
-                  side: BorderSide(width: 2, color: Colors.white)),
-              padding: const EdgeInsets.all(20),
-              backgroundColor: Colors.green,
-            ),
-            child: const Icon(Icons.add, color: Colors.white),
-          )),
+        elevation: 5,
+        child: Consumer<ProfileManager>(
+          builder: (context, profileManager, child) {
+            return ElevatedButton(
+              onPressed: () =>
+                  context.goNamed('newJamiya', params: {'tab': '1'}),
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(
+                    side: BorderSide(width: 2, color: Colors.white)),
+                padding: const EdgeInsets.all(20),
+                backgroundColor: profileManager.darkMode
+                    ? JamiyaTheme.dark().backgroundColor
+                    : JamiyaTheme.light().backgroundColor,
+              ),
+              child: const Icon(Icons.add, color: Colors.white),
+            );
+          },
+        ),
+      ),
     );
   }
 

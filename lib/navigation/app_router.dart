@@ -7,7 +7,7 @@ class AppRouter {
   final AppStateManager appStateManager;
   final ProfileManager profileManager;
   final JamiyaManager jamiyaManager;
-  User? currentUser;
+  AppCache appCache = AppCache();
 
   AppRouter(this.appStateManager, this.profileManager, this.jamiyaManager);
 
@@ -44,8 +44,8 @@ class AppRouter {
             path: 'profile',
             builder: (context, state) {
               final tab = int.tryParse(state.params['tab'] ?? '') ?? 0;
-              return ProfileScreen(user: profileManager.getUser, currentTab: tab);
-            },
+              return ProfileScreen(currentTab: tab);
+            }
           ),
           GoRoute(
             name: 'newJamiya',
@@ -66,10 +66,9 @@ class AppRouter {
                 final selectedJamiyaId =
                     int.tryParse(state.params['selectedJamiyaId'] ?? '') ?? 0;
                 return JamiyaView(
-                  user: profileManager.getUser,
                   currentTab: tab,
                   selectedJamiyaIndex: selectedJamiyaId,
-                    manager: jamiyaManager,
+                  manager: jamiyaManager,
                 );
               }),
         ],

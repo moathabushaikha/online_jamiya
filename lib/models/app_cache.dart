@@ -1,12 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'models.dart';
-import 'dart:convert';
-import 'package:online_jamiya/api/api.dart';
 
 class AppCache {
   static const kUser = 'user';
   static const currentUser = 'currentUser';
   static const allJamiyas = 'jamiyaItems';
+  static const darkMode = 'darkMode';
   List<String> allJamiyaJsonList = [];
   User? loggedInUser;
 
@@ -50,10 +49,6 @@ class AppCache {
     await prefs.setBool(kUser, false);
   }
 
-  Future<void> cacheUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(kUser, true);
-  }
 
   Future<bool> isUserLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();

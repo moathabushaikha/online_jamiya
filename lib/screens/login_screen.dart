@@ -95,8 +95,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   final isValid = formKey.currentState?.validate();
                   if (isValid!) {
                     formKey.currentState?.save();
-                    return Provider.of<AppStateManager>(context, listen: false)
-                        .login(userName, password);
+                    Provider.of<AppStateManager>(context, listen: false)
+                        .login(userName, password,context);
                   }
                 },
                 child: const Text('Login'),

@@ -1,7 +1,7 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:online_jamiya/models/models.dart';
+import 'package:online_jamiya/theme.dart';
+import 'package:provider/provider.dart';
 
 class MainImageHolder extends StatefulWidget {
   final User? cUser;
@@ -15,13 +15,20 @@ class MainImageHolder extends StatefulWidget {
 class _MainImageHolderState extends State<MainImageHolder> {
   @override
   Widget build(BuildContext context) {
+
     return Stack(
       // Drawing Image holder shape
       children: [
-        Container(
-          width: double.infinity,
-          height: 205,
-          color: Colors.green,
+        Consumer2<ProfileManager, AppStateManager>(
+          builder: (context, profileManager, appStateManager, child) {
+            return Container(
+              width: double.infinity,
+              height: 205,
+              color: profileManager.darkMode
+                  ?  JamiyaTheme.dark().backgroundColor
+                  : JamiyaTheme.light().backgroundColor,
+            );
+          },
         ),
         Positioned(
           right: 10,
@@ -49,7 +56,8 @@ class _MainImageHolderState extends State<MainImageHolder> {
             children: [
               const Text('Welcome'),
               Text(
-                '${widget.cUser?.firstName} ${widget.cUser?.lastName}',
+                '${widget.cUser?.firstName} ${widget.cUser?.lastName} '
+                    '${widget.cUser?.darkMode}',
                 style: Theme.of(context).textTheme.headline3,
               ),
               const SizedBox(

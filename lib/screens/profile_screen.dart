@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:online_jamiya/api/api.dart';
 import 'package:provider/provider.dart';
 import 'package:online_jamiya/models/models.dart';
+import 'package:image_picker/image_picker.dart';
 
-class ProfileScreen extends StatelessWidget {
-  final User? user;
-   const ProfileScreen({Key? key, required this.user, required int currentTab})
-      : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key, required int currentTab}) : super(key: key);
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final AppCache appCache = AppCache();
+  bool isDark = false;
 
   @override
   Widget build(BuildContext context) {
@@ -16,16 +24,40 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () {}, icon: const Icon(Icons.edit_note_outlined))
         ],
       ),
-      body: ListView(
-        children: [
-          Text('Welcome To Your Profile ${user?.firstName}'),
-          TextButton(
-              onPressed: () {
-                Provider.of<AppStateManager>(context, listen: false).logout();
-              },
-              child: const Text('Log out'))
-        ],
-      ),
+      body: FutureBuilder(
+          future: appCache.getCurrentUser(),
+          builder: (context, snapshot) {
+            if (snapshot.data != null) {
+              isDark = snapshot.data!.darkMode;
+            }
+            return ListView(
+              children: [
+                Text(
+                    'Welcome To Your Profile ${snapshot.data?.firstName}'
+                        ' ${snapshot.data?.lastName} ${snapshot.data?.darkMode} '),
+                SwitchListTile(
+                  value: isDark,
+                  onChanged: (val) async {
+                    snapshot.data?.darkMode = val;
+                    Provider.of<AppStateManager>(context,listen: false).updateUser(snapshot.data!);
+                    Provider.of<ProfileManager>(context,listen: false).setUserDarkMode(snapshot.data!);
+                    setState(() {
+                      isDark = snapshot.data!.darkMode;
+                    });
+                  },
+                  title: const Text('Dark mode'),
+                ),
+                TextButton(
+                    onPressed: () {
+                      Provider.of<ProfileManager>(context, listen: false)
+                          .darkMode = false;
+                      Provider.of<AppStateManager>(context, listen: false)
+                          .logout();
+                    },
+                    child: const Text('Log out'))
+              ],
+            );
+          }),
     );
   }
 }

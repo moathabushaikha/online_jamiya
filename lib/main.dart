@@ -21,8 +21,8 @@ State<Jamiya> createState() => _JamiyaState();
 }
 
 class _JamiyaState extends State<Jamiya> {
-  late final _profileManager = ProfileManager();
-  late final _jamiyaManager = JamiyaManager();
+  final _profileManager = ProfileManager();
+  final _jamiyaManager = JamiyaManager();
   late final _appRouter = AppRouter(widget.appStateManager, _profileManager,_jamiyaManager);
 
   @override
@@ -39,9 +39,10 @@ class _JamiyaState extends State<Jamiya> {
           create: (context) => widget.appStateManager,
         ),
       ],
-      child: Consumer<ProfileManager>(
-        builder: (context, profileManager, child) {
+      child: Consumer2<ProfileManager,AppStateManager>(
+        builder: (context, profileManager,appStateManager, child) {
           ThemeData theme;
+          // print('darkmode: ${profileManager.darkMode}');
           if (profileManager.darkMode) {
             theme = JamiyaTheme.dark();
           } else {

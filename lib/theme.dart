@@ -60,6 +60,8 @@ class JamiyaTheme {
 
   static ThemeData light() {
     return ThemeData(
+      scaffoldBackgroundColor: Colors.white,
+      backgroundColor: Colors.green,
       brightness: Brightness.light,
       checkboxTheme: CheckboxThemeData(
         fillColor: MaterialStateColor.resolveWith(
@@ -80,11 +82,16 @@ class JamiyaTheme {
         selectedItemColor: Colors.green,
       ),
       textTheme: lightTextTheme,
+      buttonTheme: const ButtonThemeData(
+        buttonColor: Colors.green
+      ),
     );
   }
 
   static ThemeData dark() {
     return ThemeData(
+      scaffoldBackgroundColor: Colors.grey[900],
+      backgroundColor: Colors.lightBlueAccent,
       brightness: Brightness.dark,
       appBarTheme: AppBarTheme(
         foregroundColor: Colors.white,
@@ -98,6 +105,9 @@ class JamiyaTheme {
         selectedItemColor: Colors.green,
       ),
       textTheme: darkTextTheme,
+      buttonTheme: const ButtonThemeData(
+          buttonColor: Colors.lightBlueAccent
+      ),
     );
   }
 }
