@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:online_jamiya/screens/enroll_permission.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
 
@@ -7,7 +8,6 @@ class AppRouter {
   final AppStateManager appStateManager;
   final ProfileManager profileManager;
   final JamiyaManager jamiyaManager;
-  AppCache appCache = AppCache();
 
   AppRouter(this.appStateManager, this.profileManager, this.jamiyaManager);
 
@@ -17,20 +17,21 @@ class AppRouter {
     initialLocation: '/login',
     routes: [
       GoRoute(
-          name: 'login',
-          path: '/login',
-          builder: (context, state) {
-            return const LoginScreen();
-          },
-          routes: [
-            GoRoute(
-              name: 'register',
-              path: 'register',
-              builder: (context, state) {
-                return const RegisterUser();
-              },
-            ),
-          ]),
+        name: 'login',
+        path: '/login',
+        builder: (context, state) {
+          return const LoginScreen();
+        },
+        routes: [
+          GoRoute(
+            name: 'register',
+            path: 'register',
+            builder: (context, state) {
+              return const RegisterUser();
+            },
+          ),
+        ],
+      ),
       GoRoute(
         name: 'home',
         path: '/:tab',
@@ -40,12 +41,19 @@ class AppRouter {
         },
         routes: [
           GoRoute(
-            name: 'profile',
-            path: 'profile',
+              name: 'profile',
+              path: 'profile',
+              builder: (context, state) {
+                final tab = int.tryParse(state.params['tab'] ?? '') ?? 0;
+                return ProfileScreen(currentTab: tab);
+              }),
+          GoRoute(
+            name: 'enroll_permission',
+            path: 'enroll_permission',
             builder: (context, state) {
               final tab = int.tryParse(state.params['tab'] ?? '') ?? 0;
-              return ProfileScreen(currentTab: tab);
-            }
+              return EnrollPermission(currentTab: tab);
+            },
           ),
           GoRoute(
             name: 'newJamiya',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:online_jamiya/api/api.dart';
 import 'package:provider/provider.dart';
 import 'package:online_jamiya/models/models.dart';
 import '../theme.dart';
@@ -19,6 +20,7 @@ class _HomeState extends State<Home> {
   final AppCache _appCache = AppCache();
   JamiyaManager manager = JamiyaManager();
   List<Jamiya>? userRegisteredJamiyas;
+  SqlService sqlService = SqlService();
 
   @override
   void initState() {
@@ -60,7 +62,45 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: [profileButton(widget.currentTab)],
+        actions: [
+          TextButton(
+              onPressed: () {
+                context.goNamed('enroll_permission',params: {'tab': '${widget.currentTab}'});
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text('Notifications'),
+                  const SizedBox(width: 15),
+                  ClipOval(
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      color: Colors.red,
+                      child: Consumer<JamiyaManager>(
+                        builder: (context,jamiyaManager, child){
+                          return FutureBuilder(
+                            future: sqlService.allNotifications(),
+                            builder: (context,
+                                AsyncSnapshot<List<EnrollModel>> snapshot) {
+                              List<EnrollModel> currentUserNotifications = [];
+                              if (snapshot.data != null){
+                                for(var i =0; i<snapshot.data!.length;i++){
+                                  if (snapshot.data![i].creatorId == currentUser?.id) {
+                                    currentUserNotifications.add(snapshot.data![i]);
+                                  }
+                                }
+                              }
+                              return Text('${currentUserNotifications.length}');
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+          profileButton(widget.currentTab)
+        ],
         title: Text(
           'جمعية اونلاين',
           style: Theme.of(context).textTheme.headline2,

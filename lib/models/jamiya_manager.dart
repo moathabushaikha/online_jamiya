@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:online_jamiya/api/api.dart';
 import 'models.dart';
 
@@ -51,6 +52,18 @@ class JamiyaManager extends ChangeNotifier {
     Jamiya updatedJamiya = await sqlService.readSingleJamiya(jamiyaItem.id);
     _jamiyaItems![index] = updatedJamiya;
     _appCache.setJamiyat(_jamiyaItems!);
+    notifyListeners();
+  }
+  Future<void> addNotification(Jamiya selectedJamiya, User? enrolledUser) async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd/MM/yy').format(now);
+    EnrollModel newNotification = EnrollModel(
+        selectedJamiya.id,
+        selectedJamiya.creatorId!,
+        enrolledUser!.id,
+        formattedDate,
+        'false');
+    await DataBaseConn.instance.addNotification(newNotification);
     notifyListeners();
   }
 }

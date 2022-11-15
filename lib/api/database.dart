@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:online_jamiya/screens/enroll_permission.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:online_jamiya/models/models.dart';
@@ -50,6 +51,17 @@ class DataBaseConn {
     )     
     ''';
     await database.execute(sql);
+    sql = '''CREATE TABLE ENROLL_PERMISSION 
+    (
+      ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+      CREATOR_ID TEXT NOT NULL,
+      PARTICIPANT_ID TEXT NOT NULL,
+      REQUEST_DATE TEXT NOT NULL,
+      JAMIYA_ID TEXT NOT NULL,
+      RESPONSE TEXT NOT NULL
+    )     
+    ''';
+    await database.execute(sql);
   }
 
   Future<User?> authentication(String username, String password) async {
@@ -65,17 +77,6 @@ class DataBaseConn {
   Future<int> createUser(User user) async {
     final db = await instance.database;
     return await db.insert(userTableName, user.toMap());
-    /*
-     db.insert ('user', {
-     'firstName': user.firstName,
-     'lastName': user.lastName,
-     'userName': user.userName,
-     'password': user.password,
-     'imgUrlCol': user.imgUrl,
-     'darkModeCol': user.darkMode.toString(),
-     'registeredJamiyaID': user.registeredJamiyaID.join(",")});
-     --- id will be autoincrement
-     */
   }
 
   Future<List<User>> allUsers() async {
@@ -144,5 +145,16 @@ class DataBaseConn {
     final db = await instance.database;
     return await db.delete(jamiyaTableName,
         where: '${JamiyaTable.id} = ?', whereArgs: [id]);
+  }
+
+  Future<int> addNotification(EnrollModel enrollModel) async {
+    final db = await instance.database;
+    return await db.insert('ENROLL_PERMISSION', enrollModel.toMap());
+  }
+
+  Future<List<EnrollModel>> allNotifications() async {
+    final db = await instance.database;
+    final result = await db.query('ENROLL_PERMISSION');
+    return result.map((json) => EnrollModel.fromMap(json)).toList();
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:online_jamiya/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class MainImageHolder extends StatefulWidget {
   final User? cUser;
@@ -13,9 +16,21 @@ class MainImageHolder extends StatefulWidget {
 }
 
 class _MainImageHolderState extends State<MainImageHolder> {
+  File? image;
+
+  Future pickImage() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      setState(() => this.image = imageTemp);
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Stack(
       // Drawing Image holder shape
       children: [
@@ -25,26 +40,28 @@ class _MainImageHolderState extends State<MainImageHolder> {
               width: double.infinity,
               height: 205,
               color: profileManager.darkMode
-                  ?  JamiyaTheme.dark().backgroundColor
+                  ? JamiyaTheme.dark().backgroundColor
                   : JamiyaTheme.light().backgroundColor,
             );
           },
         ),
         Positioned(
           right: 10,
-          child: Container(
-            width: 200,
-            height: 200,
-            padding: const EdgeInsets.only(top: 10),
+          child: GestureDetector(
+            onTap: pickImage,
             child: Container(
+              width: 200,
+              height: 200,
+              padding: const EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(width: 2.0, color: Colors.white),
-                  //TODO change Load Image from server
-                  image: const DecorationImage(
-                      image: AssetImage(
-                    'assets/profile_images/profile_image.png',
-                  ))),
+                image: DecorationImage(
+                  image: image != null
+                      ? FileImage(image!)
+                      : const AssetImage('assets/profile_images/profile_image.png') as ImageProvider,
+                ),
+                shape: BoxShape.circle,
+                border: Border.all(width: 2.0, color: Colors.white),
+              ),
             ),
           ),
         ),
@@ -56,8 +73,7 @@ class _MainImageHolderState extends State<MainImageHolder> {
             children: [
               const Text('Welcome'),
               Text(
-                '${widget.cUser?.firstName} ${widget.cUser?.lastName} '
-                    '${widget.cUser?.darkMode}',
+                '${widget.cUser?.firstName} ${widget.cUser?.lastName}',
                 style: Theme.of(context).textTheme.headline3,
               ),
               const SizedBox(

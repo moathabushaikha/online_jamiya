@@ -35,18 +35,22 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 int numberOfParticipants = int.parse(
                     '${manager.jamiyaItems[index].participantsId.length}');
                 DateTime endDate =
-                    startDate.add(Duration(days: 30 * numberOfParticipants));
+                startDate.add(Duration(days: 30 * numberOfParticipants));
                 // updating Jamiya ending date
                 manager.jamiyaItems[index].endingDate = endDate;
                 sqlService.updateJamiya(manager.jamiyaItems[index]);
                 // changing the format of jamiya (creation, ending) date for the listView
                 String formattedSDate =
-                    DateFormat('dd/MM/yy').format(startDate);
+                DateFormat('dd/MM/yy').format(startDate);
                 String formattedEDate = DateFormat('dd/MM/yy').format(endDate);
 
                 return InkWell(
-                  onTap: () => context.goNamed('jamiya',
-                      params: {'tab': '1', 'selectedJamiyaId': '${index + 1}'}),
+                  onTap: () =>
+                      context.goNamed('jamiya',
+                          params: {
+                            'tab': '1',
+                            'selectedJamiyaId': '${index + 1}'
+                          }),
                   child: Container(
                     color: Colors.green,
                     padding: const EdgeInsets.only(top: 8, bottom: 8),
@@ -54,6 +58,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     child: Stack(
                       children: [
                         Positioned(
+                          //ToDo conusmer child => container - change color darkmode
                           child: Container(
                             height: 125,
                             margin: const EdgeInsets.only(bottom: 30),
@@ -72,21 +77,26 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             future: sqlService.readSingleUser(int.parse(manager
                                 .jamiyaItems[index].creatorId
                                 .toString())),
-                            builder: (context, snapshot) => Text(
-                                '${snapshot.data?.firstName} ${snapshot.data?.lastName}'),
+                            builder: (context, snapshot) =>
+                                Text(
+                                    'creator : ${snapshot.data
+                                        ?.firstName} ${snapshot.data
+                                        ?.lastName}'),
                           ),
                         ),
                         Positioned(
                           left: 50,
                           top: 30,
                           child: Text(
-                              'Shared Amount : ${manager.jamiyaItems[index].shareAmount}'),
+                              'Shared Amount : ${manager.jamiyaItems[index]
+                                  .shareAmount}'),
                         ),
                         Positioned(
                           left: 50,
                           top: 45,
                           child: Text(
-                              'maximum participants ${manager.jamiyaItems[index].maxParticipants}'),
+                              'maximum participants ${manager.jamiyaItems[index]
+                                  .maxParticipants}'),
                         ),
                         Positioned(
                           left: 50,
@@ -107,39 +117,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           top: 5,
                           child: ParticipantsListView(
                               selectedJamiya: manager.jamiyaItems[index]),
-                          // Text(
-                          //   'participants : ${manager.jamiyaItems[index].participantsId}',
-                          // ),
                         ),
                         Positioned(
                           bottom: 0,
                           left: 50,
                           child: MaterialButton(
                             color: Colors.green,
-                            onPressed: () async {
-                              // register current user to selected jamiya
-                              List<String> participants =
-                                  manager.jamiyaItems[index].participantsId;
-                              List<String>? userJamiyat =
-                                  widget.currentUser?.registeredJamiyaID;
-                              if (!participants
-                                  .contains(widget.currentUser?.id)) {
-                                participants
-                                    .removeWhere((element) => element == '');
-                                userJamiyat
-                                    ?.removeWhere((element) => element == '');
-                                participants.add('${widget.currentUser?.id}');
-                                DateTime endDate = startDate.add(
-                                    Duration(days: 30 * participants.length));
-                                // updating Jamiya ending date
-                                manager.jamiyaItems[index].endingDate = endDate;
-                                await manager.updateItem(
-                                    manager.jamiyaItems[index], index);
-                                widget.currentUser?.registeredJamiyaID
-                                    .add(manager.jamiyaItems[index].id);
-                                await AppStateManager()
-                                    .updateUser(widget.currentUser!);
-                              }
+                            onPressed: () {
+                              Provider.of<JamiyaManager>(context, listen: false)
+                                  .addNotification(
+                                  manager.jamiyaItems[index], widget.currentUser);
                             },
                             child: const Text('Enroll'),
                           ),
@@ -161,7 +148,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 userJamiyat
                                     ?.removeWhere((element) => element == '');
                                 participants.removeWhere((element) =>
-                                    element == widget.currentUser?.id);
+                                element == widget.currentUser?.id);
                                 DateTime endDate = startDate.subtract(
                                     Duration(days: 30 * participants.length));
                                 // updating Jamiya ending date
@@ -170,8 +157,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                     manager.jamiyaItems[index], index);
                                 widget.currentUser?.registeredJamiyaID
                                     .removeWhere(
-                                  (element) =>
-                                      element == manager.jamiyaItems[index].id,
+                                      (element) =>
+                                  element == manager.jamiyaItems[index].id,
                                 );
                                 await AppStateManager()
                                     .updateUser(widget.currentUser!);
@@ -187,7 +174,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               },
             );
           } else {
-            return const Text('nothing');
+            return const Center(child: Text('لا يوجد جمعيات'));
           }
         },
       ),
@@ -203,8 +190,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     side: BorderSide(width: 2, color: Colors.white)),
                 padding: const EdgeInsets.all(20),
                 backgroundColor: profileManager.darkMode
-                    ? JamiyaTheme.dark().backgroundColor
-                    : JamiyaTheme.light().backgroundColor,
+                    ? JamiyaTheme
+                    .dark()
+                    .backgroundColor
+                    : JamiyaTheme
+                    .light()
+                    .backgroundColor,
               ),
               child: const Icon(Icons.add, color: Colors.white),
             );
