@@ -15,36 +15,15 @@ class ParticipantsListView extends StatefulWidget {
 class _ParticipantsListViewState extends State<ParticipantsListView> {
   final SqlService sqlService = SqlService();
 
-  // ScrollController _controller = ScrollController();
-  // bool topArrow = false,
-  //     downArrow = false;
-  //
-  // @override
-  // void initState() {
-  //   _controller = ScrollController();
-  //   _controller.addListener(_scrollListener);
-  //   super.initState();
-  // }
-  //
-  // @override
-  // void dispose() {
-  //   _controller.removeListener(() {
-  //     _scrollListener();
-  //   });
-  //   topArrow = false;
-  //   downArrow = false;
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 5, bottom: 2),
+      padding: const EdgeInsets.only(left: 5, bottom: 2,top: 6),
       height: 150,
-      width: 150,
+      width: 135,
       decoration: BoxDecoration(
-        color: Colors.green,
-        border: Border.all(width: 1, color: Colors.black),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        border: Border.all(width: 3,color: Colors.indigo.shade100)
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -63,7 +42,6 @@ class _ParticipantsListViewState extends State<ParticipantsListView> {
                   (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return ListView.builder(
-                    // controller: _controller,
                     itemCount: snapshot.data?.length,
                     itemBuilder: (context, index) => Container(
                       padding: const EdgeInsets.only(bottom: 10),
@@ -82,21 +60,4 @@ class _ParticipantsListViewState extends State<ParticipantsListView> {
       ),
     );
   }
-
-// void _scrollListener() {
-//   if (_controller.offset >= _controller.position.maxScrollExtent &&
-//       !_controller.position.outOfRange) {
-//     setState(() {
-//       downArrow = false;
-//       topArrow = true;
-//     });
-//   }
-//   if (_controller.offset <= _controller.position.minScrollExtent &&
-//       !_controller.position.outOfRange) {
-//     setState(() {
-//       topArrow = false;
-//       downArrow = true;
-//     });
-//   }
-// }
 }

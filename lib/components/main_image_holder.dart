@@ -4,6 +4,7 @@ import 'package:online_jamiya/models/models.dart';
 import 'package:online_jamiya/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:online_jamiya/managers/managers.dart';
 import 'dart:io';
 
 class MainImageHolder extends StatefulWidget {
@@ -34,14 +35,12 @@ class _MainImageHolderState extends State<MainImageHolder> {
     return Stack(
       // Drawing Image holder shape
       children: [
-        Consumer2<ProfileManager, AppStateManager>(
-          builder: (context, profileManager, appStateManager, child) {
+        Consumer<AppStateManager>(
+          builder: (context, appStateManager, child) {
             return Container(
               width: double.infinity,
               height: 205,
-              color: profileManager.darkMode
-                  ? JamiyaTheme.dark().backgroundColor
-                  : JamiyaTheme.light().backgroundColor,
+              color: Theme.of(context).backgroundColor
             );
           },
         ),

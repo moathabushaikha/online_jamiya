@@ -6,3 +6,4 @@ export 'main_screen.dart';
 export 'login_screen.dart';
 export 'profile_screen.dart';
 export 'register_user.dart';
+export 'user_notification_body.dart';

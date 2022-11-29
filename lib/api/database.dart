@@ -1,5 +1,4 @@
 import 'dart:core';
-import 'package:online_jamiya/screens/enroll_permission.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:online_jamiya/models/models.dart';
@@ -51,14 +50,15 @@ class DataBaseConn {
     )     
     ''';
     await database.execute(sql);
-    sql = '''CREATE TABLE ENROLL_PERMISSION 
+    sql = '''CREATE TABLE NOTIFICATIONS 
     (
       ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
       CREATOR_ID TEXT NOT NULL,
       PARTICIPANT_ID TEXT NOT NULL,
       REQUEST_DATE TEXT NOT NULL,
       JAMIYA_ID TEXT NOT NULL,
-      RESPONSE TEXT NOT NULL
+      RESPONSE TEXT NOT NULL,
+      NOTIFICATION_TYPE NOT NULL
     )     
     ''';
     await database.execute(sql);
@@ -147,14 +147,30 @@ class DataBaseConn {
         where: '${JamiyaTable.id} = ?', whereArgs: [id]);
   }
 
-  Future<int> addNotification(EnrollModel enrollModel) async {
+  Future<int> createNotification(MyNotification myNotification) async {
     final db = await instance.database;
-    return await db.insert('ENROLL_PERMISSION', enrollModel.toMap());
+    return await db.insert('NOTIFICATIONS', myNotification.toMap());
+  }
+  Future<MyNotification> getNotificationById(String id) async {
+    final db = await instance.database;
+    final maps = await db.query('NOTIFICATIONS',
+        where: 'ID = ?',
+        whereArgs: [id]);
+    if (maps.isNotEmpty) {
+      return MyNotification.fromMap(maps.first);
+    } else {
+      throw Exception('ID $id is not found');
+    }
   }
 
-  Future<List<EnrollModel>> allNotifications() async {
+  Future<List<MyNotification>> allNotifications() async {
     final db = await instance.database;
-    final result = await db.query('ENROLL_PERMISSION');
-    return result.map((json) => EnrollModel.fromMap(json)).toList();
+    final result = await db.query('NOTIFICATIONS');
+    return result.map((json) => MyNotification.fromMap(json)).toList();
+  }
+  Future<int> deleteNotification(String id) async {
+    final db = await instance.database;
+    return await db.delete('NOTIFICATIONS',
+        where: 'ID = ?', whereArgs: [id]);
   }
 }

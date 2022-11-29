@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'models.dart';
+import 'package:online_jamiya/models/models.dart';
 import 'package:online_jamiya/api/api.dart';
+import 'managers.dart';
 
 class JamiyaTabs {
   static const int mainScreen = 0;

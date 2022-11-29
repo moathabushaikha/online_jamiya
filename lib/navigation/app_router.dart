@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:online_jamiya/screens/enroll_permission.dart';
-import '../models/models.dart';
+import 'package:online_jamiya/managers/managers.dart';
 import '../screens/screens.dart';
 
 class AppRouter {
   final AppStateManager appStateManager;
   final ProfileManager profileManager;
   final JamiyaManager jamiyaManager;
+  final NotificationManager notificationManager;
 
-  AppRouter(this.appStateManager, this.profileManager, this.jamiyaManager);
+  AppRouter(this.appStateManager, this.profileManager, this.jamiyaManager,this.notificationManager);
 
   late final router = GoRouter(
     debugLogDiagnostics: true,
@@ -48,11 +48,11 @@ class AppRouter {
                 return ProfileScreen(currentTab: tab);
               }),
           GoRoute(
-            name: 'enroll_permission',
-            path: 'enroll_permission',
+            name: 'userNotification',
+            path: 'userNotification',
             builder: (context, state) {
               final tab = int.tryParse(state.params['tab'] ?? '') ?? 0;
-              return EnrollPermission(currentTab: tab);
+              return UserNotificationBody(currentTab: tab);
             },
           ),
           GoRoute(

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:online_jamiya/api/api.dart';
+import 'package:online_jamiya/managers/managers.dart';
 import 'package:provider/provider.dart';
-import 'package:online_jamiya/models/models.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key, required int currentTab}) : super(key: key);

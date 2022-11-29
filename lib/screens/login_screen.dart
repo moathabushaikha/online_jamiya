@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:online_jamiya/api/api.dart';
 import 'package:provider/provider.dart';
-import 'package:online_jamiya/models/models.dart';
+import 'package:online_jamiya/managers/managers.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -82,30 +81,40 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 32,
               ),
-              ElevatedButton(
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                      side: const BorderSide(color: Colors.black),
-                    ),
-                  ),
-                ),
+              OutlinedButton(
                 onPressed: () {
                   final isValid = formKey.currentState?.validate();
                   if (isValid!) {
                     formKey.currentState?.save();
                     Provider.of<AppStateManager>(context, listen: false)
-                        .login(userName, password,context);
+                        .login(userName, password, context);
                   }
                 },
-                child: const Text('Login'),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.login_outlined),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text('Login'),
+                  ],
+                ),
               ),
-              ElevatedButton(
+              OutlinedButton(
                 onPressed: () {
                   context.goNamed('register');
                 },
-                child: const Text('Register New User'),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.person_add),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Text('Register New User'),
+                  ],
+                ),
               ),
             ],
           ),

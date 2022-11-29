@@ -17,14 +17,16 @@ class User {
   List<String> registeredJamiyaID;
   String imgUrl;
 
-  User(this.id,
-      {required this.userName,
-      required this.firstName,
-      required this.lastName,
-      required this.password,
-      required this.imgUrl,
-      required this.registeredJamiyaID,
-      required this.darkMode});
+  User(
+    this.id, {
+    required this.userName,
+    required this.firstName,
+    required this.lastName,
+    required this.password,
+    required this.imgUrl,
+    required this.registeredJamiyaID,
+    required this.darkMode,
+  });
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{
@@ -50,7 +52,7 @@ class User {
       UserTableCols.darkModeCol: darkMode.toString(),
       UserTableCols.registeredJamiyaID: registeredJamiyaID.join(","),
     };
-    return map;// map = {'firstName':firstName,...etc}
+    return map; // map = {'firstName':firstName,...etc}
   }
 
   factory User.fromMap(Map<String, dynamic> map) {

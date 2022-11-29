@@ -28,18 +28,28 @@ class JamiyaTheme {
       fontWeight: FontWeight.w600,
       color: Colors.black,
     ),
+    button: GoogleFonts.openSans(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: Colors.black,
+    ),
   );
 
   static TextTheme darkTextTheme = TextTheme(
     bodyText1: GoogleFonts.openSans(
-      fontSize: 14.0,
+      color: Colors.indigo[200],
+      fontSize: 16,
       fontWeight: FontWeight.w700,
-      color: Colors.white,
+    ),
+    bodyText2: GoogleFonts.openSans(
+      color: Colors.indigo[400],
+      fontSize: 15,
+      fontWeight: FontWeight.w700,
     ),
     headline1: GoogleFonts.openSans(
+      color: Colors.indigo[400],
       fontSize: 32.0,
       fontWeight: FontWeight.bold,
-      color: Colors.white,
     ),
     headline2: GoogleFonts.openSans(
       fontSize: 21.0,
@@ -49,11 +59,16 @@ class JamiyaTheme {
     headline3: GoogleFonts.openSans(
       fontSize: 16.0,
       fontWeight: FontWeight.w600,
-      color: Colors.white,
+      color: Colors.indigo.shade200,
     ),
     headline6: GoogleFonts.openSans(
       fontSize: 20.0,
       fontWeight: FontWeight.w600,
+      color: Colors.black12,
+    ),
+    button: GoogleFonts.openSans(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
       color: Colors.white,
     ),
   );
@@ -65,7 +80,7 @@ class JamiyaTheme {
       brightness: Brightness.light,
       checkboxTheme: CheckboxThemeData(
         fillColor: MaterialStateColor.resolveWith(
-              (states) {
+          (states) {
             return Colors.black;
           },
         ),
@@ -74,39 +89,58 @@ class JamiyaTheme {
         foregroundColor: Colors.black,
         backgroundColor: Colors.white,
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.black,
-      ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         selectedItemColor: Colors.green,
       ),
       textTheme: lightTextTheme,
-      buttonTheme: const ButtonThemeData(
-        buttonColor: Colors.green
+      buttonTheme: const ButtonThemeData(buttonColor: Colors.green),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          padding: const MaterialStatePropertyAll(EdgeInsets.all(25)),
+          elevation: const MaterialStatePropertyAll(12.0),
+          backgroundColor:
+          const MaterialStatePropertyAll(Colors.blue),
+          shape: MaterialStateProperty.all(
+            const CircleBorder(
+              side: BorderSide(
+                color: Colors.white54,
+                width: 3,
+              ),
+            ),
+          ),),
       ),
     );
   }
 
   static ThemeData dark() {
     return ThemeData(
+      cardColor: Colors.grey.shade800,
       scaffoldBackgroundColor: Colors.grey[900],
-      backgroundColor: Colors.lightBlueAccent,
+      backgroundColor: Colors.black26,
       brightness: Brightness.dark,
       appBarTheme: AppBarTheme(
         foregroundColor: Colors.white,
         backgroundColor: Colors.grey[900],
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.green,
-      ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        selectedItemColor: Colors.green,
+        selectedItemColor: Colors.white24,
+        unselectedItemColor: Colors.black54,
       ),
       textTheme: darkTextTheme,
-      buttonTheme: const ButtonThemeData(
-          buttonColor: Colors.lightBlueAccent
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          padding: const MaterialStatePropertyAll(EdgeInsets.all(20)),
+          elevation: const MaterialStatePropertyAll(12.0),
+          backgroundColor:
+          const MaterialStatePropertyAll(Colors.indigo),
+          shape: MaterialStateProperty.all(
+            const CircleBorder(
+              side: BorderSide(
+                color: Colors.white54,
+                width: 3,
+              ),
+            ),
+          ),),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:provider/provider.dart';
+import 'package:online_jamiya/managers/managers.dart';
 
 class RegisterUser extends StatefulWidget {
   const RegisterUser({Key? key}) : super(key: key);
@@ -120,7 +121,7 @@ class _RegisterUserState extends State<RegisterUser> {
             const SizedBox(
               height: 16,
             ),
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () async {
                 final isValid = formKey.currentState?.validate();
                 if (isValid!) {

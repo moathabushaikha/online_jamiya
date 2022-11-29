@@ -4,6 +4,7 @@ import 'package:online_jamiya/api/api.dart';
 import 'package:provider/provider.dart';
 import 'package:online_jamiya/models/models.dart';
 import '../theme.dart';
+import 'package:online_jamiya/managers/managers.dart';
 import 'screens.dart';
 
 class Home extends StatefulWidget {
@@ -21,6 +22,7 @@ class _HomeState extends State<Home> {
   JamiyaManager manager = JamiyaManager();
   List<Jamiya>? userRegisteredJamiyas;
   SqlService sqlService = SqlService();
+  List<MyNotification> currentUserNotifications = [];
 
   @override
   void initState() {
@@ -60,45 +62,56 @@ class _HomeState extends State<Home> {
       );
     }
 
+    Widget notification(int currentTab) {
+      return GestureDetector(
+        onTap: () =>
+            context.goNamed('userNotification', params: {'tab': '$currentTab'}),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            const Text('Notifications'),
+            const SizedBox(width: 10),
+            Consumer<NotificationManager>(
+              builder: (context, notificationManager, child) {
+                return FutureBuilder(
+                  future: sqlService.allNotifications(),
+                  builder:
+                      (context, AsyncSnapshot<List<MyNotification>> snapshot) {
+                    currentUserNotifications = [];
+                    if (snapshot.data != null) {
+                      for (var i = 0; i < snapshot.data!.length; i++) {
+                        if (snapshot.data![i].creatorId == currentUser?.id) {
+                          currentUserNotifications.add(snapshot.data![i]);
+                        }
+                      }
+                      Provider.of<NotificationManager>(context, listen: false)
+                          .setNotifications(currentUserNotifications);
+                    }
+                    return Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: currentUserNotifications.isNotEmpty
+                            ? Colors.red
+                            : Colors.green,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(30)),
+                      ),
+                      child: Text('${currentUserNotifications.length}'),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         actions: [
-          TextButton(
-              onPressed: () {
-                context.goNamed('enroll_permission',params: {'tab': '${widget.currentTab}'});
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  const Text('Notifications'),
-                  const SizedBox(width: 15),
-                  ClipOval(
-                    child: Container(
-                      padding: const EdgeInsets.all(5),
-                      color: Colors.red,
-                      child: Consumer<JamiyaManager>(
-                        builder: (context,jamiyaManager, child){
-                          return FutureBuilder(
-                            future: sqlService.allNotifications(),
-                            builder: (context,
-                                AsyncSnapshot<List<EnrollModel>> snapshot) {
-                              List<EnrollModel> currentUserNotifications = [];
-                              if (snapshot.data != null){
-                                for(var i =0; i<snapshot.data!.length;i++){
-                                  if (snapshot.data![i].creatorId == currentUser?.id) {
-                                    currentUserNotifications.add(snapshot.data![i]);
-                                  }
-                                }
-                              }
-                              return Text('${currentUserNotifications.length}');
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              )),
+          notification(widget.currentTab),
+          const SizedBox(width: 10),
           profileButton(widget.currentTab)
         ],
         title: Text(
@@ -111,34 +124,28 @@ class _HomeState extends State<Home> {
         index: widget.currentTab,
         children: pages,
       ),
-      bottomNavigationBar:
-          Consumer<ProfileManager>(builder: (context, profMngr, child) {
-        return BottomNavigationBar(
-          selectedItemColor: profMngr.darkMode
-              ? JamiyaTheme.dark().backgroundColor
-              : JamiyaTheme.light().backgroundColor,
-          currentIndex: widget.currentTab,
-          onTap: (index) {
-            Provider.of<AppStateManager>(context, listen: false).goToTab(index);
-            context.goNamed(
-              'home',
-              params: {
-                'tab': '$index',
-              },
-            );
-          },
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.book),
-              label: 'الرئيسية',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.explore),
-              label: 'الجمعيات',
-            ),
-          ],
-        );
-      }),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: widget.currentTab,
+        onTap: (index) {
+          Provider.of<AppStateManager>(context, listen: false).goToTab(index);
+          context.goNamed(
+            'home',
+            params: {
+              'tab': '$index',
+            },
+          );
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'الرئيسية',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.explore),
+            label: 'الجمعيات',
+          ),
+        ],
+      ),
     );
   }
 

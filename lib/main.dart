@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:online_jamiya/models/models.dart';
+import 'package:online_jamiya/managers/managers.dart';
 import 'package:online_jamiya/theme.dart';
 import 'package:provider/provider.dart';
 import 'navigation/app_router.dart';
@@ -12,18 +12,20 @@ void main() async {
 }
 
 class Jamiya extends StatefulWidget {
-final appStateManager = AppStateManager();
+  final appStateManager = AppStateManager();
 
-Jamiya({Key? key, required appStateManager}) : super(key: key);
+  Jamiya({Key? key, required appStateManager}) : super(key: key);
 
-@override
-State<Jamiya> createState() => _JamiyaState();
+  @override
+  State<Jamiya> createState() => _JamiyaState();
 }
 
 class _JamiyaState extends State<Jamiya> {
   final _profileManager = ProfileManager();
   final _jamiyaManager = JamiyaManager();
-  late final _appRouter = AppRouter(widget.appStateManager, _profileManager,_jamiyaManager);
+  final notificationManager = NotificationManager();
+  late final _appRouter = AppRouter(widget.appStateManager, _profileManager,
+      _jamiyaManager, notificationManager);
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +40,12 @@ class _JamiyaState extends State<Jamiya> {
         ChangeNotifierProvider(
           create: (context) => widget.appStateManager,
         ),
+        ChangeNotifierProvider(
+          create: (context) => notificationManager,
+        ),
       ],
-      child: Consumer2<ProfileManager,AppStateManager>(
-        builder: (context, profileManager,appStateManager, child) {
+      child: Consumer2<ProfileManager, AppStateManager>(
+        builder: (context, profileManager, appStateManager, child) {
           ThemeData theme;
           // print('darkmode: ${profileManager.darkMode}');
           if (profileManager.darkMode) {
@@ -63,6 +68,3 @@ class _JamiyaState extends State<Jamiya> {
     );
   }
 }
-
-
-

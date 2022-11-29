@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:online_jamiya/api/api.dart';
-import 'models.dart';
+import 'package:online_jamiya/models/models.dart';
 
 class ProfileManager extends ChangeNotifier {
   SqlService sqlService = SqlService();

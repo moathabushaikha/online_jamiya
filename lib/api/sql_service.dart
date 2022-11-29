@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:online_jamiya/api/api.dart';
 import 'package:online_jamiya/models/models.dart';
 
@@ -64,9 +63,19 @@ class SqlService {
   Future<void> deleteJamiya(String id) async {
     await DataBaseConn.instance.deleteJamiya(id);
   }
-
-
-  Future<List<EnrollModel>> allNotifications() async{
+  Future<int> createNotification(MyNotification myNotification) async {
+    return await DataBaseConn.instance.createNotification(myNotification);
+  }
+  Future<MyNotification> readSingleNotification(String id) async {
+    return await DataBaseConn.instance.getNotificationById(id);
+  }
+  Future<List<MyNotification>> allNotifications() async{
     return await DataBaseConn.instance.allNotifications();
+  }
+  Future<void> updateNotification(MyNotification myNotification)async{
+    // await DataBaseConn.instance.updateNotification();
+  }
+  Future<void> deleteNotification(String id) async {
+    await DataBaseConn.instance.deleteNotification(id);
   }
 }

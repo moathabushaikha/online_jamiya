@@ -1,10 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'models.dart';
+import 'package:online_jamiya/models/models.dart';
 
 class AppCache {
   static const kUser = 'user';
   static const currentUser = 'currentUser';
   static const allJamiyas = 'jamiyaItems';
+  static const allNotifications = 'notifications';
   static const darkMode = 'darkMode';
   List<String> allJamiyaJsonList = [];
   User? loggedInUser;
@@ -43,7 +44,17 @@ class AppCache {
     loggedInUser = userFromJson(loggedInUserJson!);
     return loggedInUser;
   }
-
+  Future<void> setNotificationsList(List<MyNotification> myNotifications)async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> notificationToString = myNotifications.map((e) => notificationToJson(e)).toList();
+    prefs.setStringList(allNotifications,notificationToString);
+  }
+  Future<List<MyNotification>> getNotificationsList()async
+  {
+    final prefs = await SharedPreferences.getInstance();
+    var notificationsListOfString = prefs.getStringList(allNotifications);
+    return notificationsListOfString!.map((e) => notificationFromJson(e)).toList();
+  }
   Future<void> invalidate() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(kUser, false);

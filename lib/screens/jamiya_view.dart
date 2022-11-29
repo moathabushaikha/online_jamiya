@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:online_jamiya/models/models.dart';
+import 'package:online_jamiya/managers/managers.dart';
 
 class JamiyaView extends StatefulWidget {
   final int selectedJamiyaIndex;
   final JamiyaManager manager;
 
-  int? currentTab;
+  final int? currentTab;
 
-  JamiyaView(
+  const JamiyaView(
       {Key? key,
       required this.currentTab,
       required this.selectedJamiyaIndex,
@@ -57,7 +58,7 @@ class _JamiyaViewState extends State<JamiyaView> {
                 buildDataContainer('تنتهي في', formattedEDate),
                 buildDataContainer('انشات عن طريق', selectedJamiya.creatorId),
                 buildDataContainer(
-                    'قيمة الجمعية', selectedJamiya!.shareAmount * participants),
+                    'قيمة الجمعية', selectedJamiya.shareAmount * participants),
               ],
             ),
           ),
@@ -72,7 +73,7 @@ class _JamiyaViewState extends State<JamiyaView> {
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           border: Border.all(width: 4, color: Colors.green),
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: const BorderRadius.all(Radius.circular(16)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

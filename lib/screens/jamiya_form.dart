@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:go_router/go_router.dart';
-import 'package:online_jamiya/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:online_jamiya/managers/managers.dart';
 
 class JamiyaForm extends StatefulWidget {
   final Function(Jamiya) onCreate;
@@ -95,7 +95,7 @@ class _JamiyaFormState extends State<JamiyaForm> {
                 const SizedBox(
                   width: 40,
                 ),
-                ElevatedButton(
+                OutlinedButton(
                   onPressed: () async {
                     final date = await pickDate();
                     if (date == null) return;
@@ -122,16 +122,11 @@ class _JamiyaFormState extends State<JamiyaForm> {
                   .of(context)
                   .size
                   .width / 4,
-              child: Consumer<ProfileManager>(
-                builder: (context,profileManager,child){
-                  return MaterialButton(
-                    color: profileManager.darkMode ? JamiyaTheme.dark().backgroundColor : JamiyaTheme.light().backgroundColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
+              child:
+                   OutlinedButton(
+                     style: Theme.of(context).outlinedButtonTheme.style,
                     child: const Text(
                       'create jamiya',
-                      style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
                       Jamiya newJamiya = Jamiya(
@@ -149,10 +144,9 @@ class _JamiyaFormState extends State<JamiyaForm> {
                       context.goNamed('home',
                           params: {'tab': '${JamiyaTabs.explore}'});
                     },
-                  );
-                },
+                  ),
               ),
-            )
+
           ],
         ),
       ),
