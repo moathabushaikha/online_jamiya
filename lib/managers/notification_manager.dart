@@ -28,15 +28,12 @@ class NotificationManager extends ChangeNotifier {
   }
 
   void addNotification(MyNotification notification) async {
-    List<MyNotification> allNotifications = await sqlService.allNotifications();
-    if (notificationNotExist(notification, allNotifications)) {
-      int newNotificationId = await sqlService.createNotification(notification);
-      MyNotification newNotification =
-          await sqlService.readSingleNotification(newNotificationId.toString());
-      _notifications?.add(newNotification);
-      if (_notifications != null) {
-        _appCache.setNotificationsList(_notifications!);
-      }
+    int newNotificationId = await sqlService.createNotification(notification);
+    MyNotification newNotification =
+        await sqlService.readSingleNotification(newNotificationId.toString());
+    _notifications?.add(newNotification);
+    if (_notifications != null) {
+      _appCache.setNotificationsList(_notifications!);
       notifyListeners();
     }
   }
@@ -52,21 +49,8 @@ class NotificationManager extends ChangeNotifier {
 
   Future<void> updateItem(MyNotification myNotification, index) async {
     await sqlService.updateNotification(myNotification);
-    MyNotification updatedNotification =
-        await sqlService.readSingleNotification(myNotification.id);
+    MyNotification updatedNotification = await sqlService.readSingleNotification(myNotification.id);
     _notifications![index] = updatedNotification;
     notifyListeners();
-  }
-
-  bool notificationNotExist(
-      MyNotification notification, List<MyNotification> allNotifications) {
-    for (int i = 0; i < allNotifications.length; i++) {
-      if (allNotifications[i].jamiyaId == notification.jamiyaId) {
-        if (allNotifications[i].userToEnrollId == notification.userToEnrollId) {
-          return false;
-        }
-      }
-    }
-    return true;
   }
 }

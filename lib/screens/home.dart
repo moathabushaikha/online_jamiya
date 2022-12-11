@@ -1,9 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:online_jamiya/api/api.dart';
 import 'package:provider/provider.dart';
 import 'package:online_jamiya/models/models.dart';
-import '../theme.dart';
 import 'package:online_jamiya/managers/managers.dart';
 import 'screens.dart';
 
@@ -49,11 +50,13 @@ class _HomeState extends State<Home> {
       return Padding(
         padding: const EdgeInsets.only(right: 16.0),
         child: GestureDetector(
-          child: const CircleAvatar(
-            backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage(
-              'assets/profile_images/profile_image.png',
-            ),
+          child: Center(
+            child: CircleAvatar(
+                backgroundImage: currentUser?.imgUrl.length != 0
+                    ? FileImage(File('${currentUser?.imgUrl}'), scale: 0.5)
+                    : const AssetImage(
+                        'assets/profile_images/profile_image.png',
+                      ) as ImageProvider),
           ),
           onTap: () {
             context.goNamed('profile', params: {'tab': '$currentTab'});
@@ -64,8 +67,7 @@ class _HomeState extends State<Home> {
 
     Widget notification(int currentTab) {
       return GestureDetector(
-        onTap: () =>
-            context.goNamed('userNotification', params: {'tab': '$currentTab'}),
+        onTap: () => context.goNamed('userNotification', params: {'tab': '$currentTab'}),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -75,12 +77,11 @@ class _HomeState extends State<Home> {
               builder: (context, notificationManager, child) {
                 return FutureBuilder(
                   future: sqlService.allNotifications(),
-                  builder:
-                      (context, AsyncSnapshot<List<MyNotification>> snapshot) {
+                  builder: (context, AsyncSnapshot<List<MyNotification>> snapshot) {
                     currentUserNotifications = [];
                     if (snapshot.data != null) {
                       for (var i = 0; i < snapshot.data!.length; i++) {
-                        if (snapshot.data![i].creatorId == currentUser?.id) {
+                        if (snapshot.data![i].userToNoti == currentUser?.id) {
                           currentUserNotifications.add(snapshot.data![i]);
                         }
                       }
@@ -90,11 +91,8 @@ class _HomeState extends State<Home> {
                     return Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: currentUserNotifications.isNotEmpty
-                            ? Colors.red
-                            : Colors.green,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(30)),
+                        color: currentUserNotifications.isNotEmpty ? Colors.red : Colors.green,
+                        borderRadius: const BorderRadius.all(Radius.circular(30)),
                       ),
                       child: Text('${currentUserNotifications.length}'),
                     );
@@ -112,7 +110,9 @@ class _HomeState extends State<Home> {
         actions: [
           notification(widget.currentTab),
           const SizedBox(width: 10),
-          profileButton(widget.currentTab)
+          Consumer<AppStateManager>(
+            builder: (context, value, child) => profileButton(widget.currentTab),
+          )
         ],
         title: Text(
           'جمعية اونلاين',

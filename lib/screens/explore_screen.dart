@@ -23,31 +23,35 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<JamiyaManager>(
+      body:
+          // #create a consumer when user asks to enroll to a specific jamiya and approved it will rebuild#
+          Consumer<JamiyaManager>(
         builder: (context, manager, child) {
           fillJamiyat(manager);
           if (manager.jamiyaItems.isNotEmpty) {
+            // # list of all created jamiyas #
             return ListView.builder(
               shrinkWrap: true,
               itemCount: manager.jamiyaItems.length,
               padding: const EdgeInsets.all(10),
               itemBuilder: (context, index) {
+                // fixing the participantId string if null remove the empty space
+                manager.jamiyaItems[index].participantsId.removeWhere((element) => element == '');
+                int numberOfParticipants =
+                    int.parse('${manager.jamiyaItems[index].participantsId.length}');
+                // add months to jamiya duration equals to number of participants
                 DateTime startDate = manager.jamiyaItems[index].startingDate;
-                int numberOfParticipants = int.parse(
-                    '${manager.jamiyaItems[index].participantsId.length}');
-                DateTime endDate =
-                    startDate.add(Duration(days: 30 * numberOfParticipants));
+                DateTime endDate = startDate.add(Duration(days: 30 * numberOfParticipants));
                 // updating Jamiya ending date
                 manager.jamiyaItems[index].endingDate = endDate;
                 sqlService.updateJamiya(manager.jamiyaItems[index]);
-                // changing the format of jamiya (creation, ending) date for the listView
-                String formattedSDate =
-                    DateFormat('dd/MM/yy').format(startDate);
+                // changing the format of jamiya (creation, ending) date for the listView item
+                String formattedSDate = DateFormat('dd/MM/yy').format(startDate);
                 String formattedEDate = DateFormat('dd/MM/yy').format(endDate);
 
                 return InkWell(
-                  onTap: () => context.goNamed('jamiya',
-                      params: {'tab': '1', 'selectedJamiyaId': '${index + 1}'}),
+                  onTap: () => context
+                      .goNamed('jamiya', params: {'tab': '1', 'selectedJamiyaId': '${index + 1}'}),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).backgroundColor,
@@ -67,61 +71,47 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               child: RotatedBox(
                                 quarterTurns: -1,
                                 child: Text(manager.jamiyaItems[index].name,
-                                    style:
-                                        Theme.of(context).textTheme.headline1),
+                                    style: Theme.of(context).textTheme.headline1),
                               ),
                             ),
                             Expanded(
                               child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   FutureBuilder(
-                                    future: sqlService.readSingleUser(int.parse(
-                                        manager.jamiyaItems[index].creatorId
-                                            .toString())),
+                                    future: sqlService.readSingleUser(
+                                        int.parse(manager.jamiyaItems[index].creatorId.toString())),
                                     builder: (context, snapshot) => Text(
                                       'creator : ${snapshot.data?.firstName} ${snapshot.data?.lastName}',
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
+                                      style: Theme.of(context).textTheme.bodyText1,
                                     ),
                                   ),
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  Text(
-                                      'Shared Amount : ${manager.jamiyaItems[index].shareAmount}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText2),
+                                  Text('Shared Amount : ${manager.jamiyaItems[index].shareAmount}',
+                                      style: Theme.of(context).textTheme.bodyText2),
                                   const SizedBox(
                                     height: 5,
                                   ),
                                   Text(
                                       'maximum participants ${manager.jamiyaItems[index].maxParticipants}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText2),
+                                      style: Theme.of(context).textTheme.bodyText2),
                                   const SizedBox(
                                     height: 5,
                                   ),
                                   Text('Starting in : $formattedSDate',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText2),
+                                      style: Theme.of(context).textTheme.bodyText2),
                                   const SizedBox(
                                     height: 5,
                                   ),
                                   Text('Ending in: $formattedEDate',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText2),
+                                      style: Theme.of(context).textTheme.bodyText2),
                                 ],
                               ),
                             ),
-                            ParticipantsListView(
-                                selectedJamiya: manager.jamiyaItems[index]),
+                            ParticipantsListView(selectedJamiya: manager.jamiyaItems[index]),
                           ],
                         ),
                         Row(
@@ -130,72 +120,65 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               width: 100,
                             ),
                             ElevatedButton(
-                              style:
-                                  Theme.of(context).elevatedButtonTheme.style,
-                              onPressed: () {
-                                bool cantEnroll = false;
+                              style: Theme.of(context).elevatedButtonTheme.style,
+                              onPressed: () async {
                                 DateTime now = DateTime.now();
-                                String notificationDate =
-                                    DateFormat('yyyy-MM-dd').format(now);
-                                MyNotification newNotification = MyNotification(
-                                    '1',
-                                    manager.jamiyaItems[index].id,
-                                    manager.jamiyaItems[index].creatorId!,
-                                    widget.currentUser!.id,
-                                    notificationDate,
-                                    'request',
-                                    'false');
-                                for (var element in manager.jamiyaItems) {
-                                  if (element.participantsId.contains(
-                                      newNotification.userToEnrollId)) {
-                                    cantEnroll = true;
-                                    break;
+                                String notificationDate = DateFormat('yyyy-MM-dd').format(now);
+                                // check if the user isn't in this jamiya
+                                if (!manager.jamiyaItems[index].participantsId
+                                    .contains(widget.currentUser?.id)) {
+                                  List<MyNotification> allNotifications =
+                                      await sqlService.allNotifications();
+                                  // check if the user didn't send request to join more than once
+                                  if (notificationNotExist(widget.currentUser?.id,
+                                      manager.jamiyaItems[index], allNotifications)) {
+                                    MyNotification newNotification = MyNotification(
+                                        '1',
+                                        manager.jamiyaItems[index].id,
+                                        manager.jamiyaItems[index].creatorId!,
+                                        widget.currentUser!.id,
+                                        notificationDate,
+                                        'request');
+                                    if (mounted) {
+                                      Provider.of<NotificationManager>(context, listen: false)
+                                          .addNotification(newNotification);
+                                    }
+                                  } else {
+                                    messageDialog('Enroll Control','you already send a request');
                                   }
-                                }
-                                if (!cantEnroll) {
-                                  Provider.of<NotificationManager>(context,
-                                          listen: false)
-                                      .addNotification(newNotification);
+                                } else {
+                                  messageDialog('Enroll Control','you already enrolled');
                                 }
                               },
-                              child: Text('Enroll',
-                                  style: Theme.of(context).textTheme.button),
-                            ),/
+                              child: Text('Enroll', style: Theme.of(context).textTheme.button),
+                            ),
                             const SizedBox(
                               width: 5,
                             ),
                             ElevatedButton(
-                              style:
-                                  Theme.of(context).elevatedButtonTheme.style,
+                              style: Theme.of(context).elevatedButtonTheme.style,
                               onPressed: () async {
                                 // register current user to selected jamiya
                                 List<String> participants =
                                     manager.jamiyaItems[index].participantsId;
-                                List<String>? userJamiyat =
-                                    widget.currentUser?.registeredJamiyaID;
-                                if (participants
-                                    .contains(widget.currentUser?.id)) {
+                                List<String>? userJamiyat = widget.currentUser?.registeredJamiyaID;
+                                if (participants.contains(widget.currentUser?.id)) {
+                                  participants.removeWhere((element) => element == '');
+                                  userJamiyat?.removeWhere((element) => element == '');
                                   participants
-                                      .removeWhere((element) => element == '');
-                                  userJamiyat
-                                      ?.removeWhere((element) => element == '');
-                                  participants.removeWhere((element) =>
-                                      element == widget.currentUser?.id);
-                                  DateTime endDate = startDate.subtract(
-                                      Duration(days: 30 * participants.length));
+                                      .removeWhere((element) => element == widget.currentUser?.id);
+                                  DateTime endDate =
+                                      startDate.subtract(Duration(days: 30 * participants.length));
                                   // updating Jamiya ending date
-                                  manager.jamiyaItems[index].endingDate =
-                                      endDate;
-                                  await manager
-                                      .updateItem(manager.jamiyaItems[index]);
-                                  widget.currentUser?.registeredJamiyaID
-                                      .removeWhere(
-                                    (element) =>
-                                        element ==
-                                        manager.jamiyaItems[index].id,
+                                  manager.jamiyaItems[index].endingDate = endDate;
+                                  await manager.updateItem(manager.jamiyaItems[index]);
+                                  widget.currentUser?.registeredJamiyaID.removeWhere(
+                                    (element) => element == manager.jamiyaItems[index].id,
                                   );
-                                  await AppStateManager()
-                                      .updateUser(widget.currentUser!);
+                                  if (mounted) {
+                                    Provider.of<AppStateManager>(context, listen: false)
+                                        .updateUser(widget.currentUser!);
+                                  }
                                 }
                               },
                               child: Text(
@@ -221,11 +204,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
         child: Consumer<ProfileManager>(
           builder: (context, profileManager, child) {
             return ElevatedButton(
-              onPressed: () =>
-                  context.goNamed('newJamiya', params: {'tab': '1'}),
+              onPressed: () => context.goNamed('newJamiya', params: {'tab': '1'}),
               style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(
-                    side: BorderSide(width: 2, color: Colors.white)),
+                shape: const CircleBorder(side: BorderSide(width: 2, color: Colors.white)),
                 padding: const EdgeInsets.all(20),
                 backgroundColor: profileManager.darkMode
                     ? JamiyaTheme.dark().backgroundColor
@@ -241,5 +222,32 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   void fillJamiyat(manager) async {
     await manager.getJamiyat();
+  }
+
+  bool notificationNotExist(
+      String? userFromId, Jamiya selectedJamiya, List<MyNotification> allNotifications) {
+    for (int i = 0; i < allNotifications.length; i++) {
+      if (allNotifications[i].jamiyaId == selectedJamiya.id) {
+        if (allNotifications[i].userFromNoti == userFromId) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  Future<String?> messageDialog(String title,String message){
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'OK'),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }

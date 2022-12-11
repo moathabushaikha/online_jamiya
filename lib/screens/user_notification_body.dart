@@ -6,8 +6,7 @@ import 'package:online_jamiya/models/models.dart';
 import 'package:provider/provider.dart';
 
 class UserNotificationBody extends StatefulWidget {
-  const UserNotificationBody({Key? key, required int currentTab})
-      : super(key: key);
+  const UserNotificationBody({Key? key, required int currentTab}) : super(key: key);
 
   @override
   State<UserNotificationBody> createState() => _UserNotificationBodyState();
@@ -28,11 +27,10 @@ class _UserNotificationBodyState extends State<UserNotificationBody> {
       ),
       body: Consumer<NotificationManager>(
         builder: (context, notManager, child) {
-          return ListView.builder(
+          return notManager.notifications.isNotEmpty ? ListView.builder(
             itemCount: notManager.notifications.length,
             itemBuilder: (context, index) {
-              int id = int.parse(
-                  (notManager.notifications[index].userToEnrollId).toString());
+              int id = int.parse((notManager.notifications[index].userFromNoti).toString());
               return Container(
                 margin: const EdgeInsets.all(5),
                 padding: const EdgeInsets.all(10),
@@ -50,11 +48,10 @@ class _UserNotificationBodyState extends State<UserNotificationBody> {
                         Text('Notification ${index + 1}'),
                         const SizedBox(height: 8),
                         FutureBuilder(
-                          future: sqlService.readSingleJamiya(
-                              notManager.notifications[index].jamiyaId),
+                          future:
+                              sqlService.readSingleJamiya(notManager.notifications[index].jamiyaId),
                           builder: ((context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
+                            if (snapshot.connectionState == ConnectionState.done) {
                               jamiya = snapshot.data;
                               return Text(
                                 'jamiya: ${jamiya?.name}',
@@ -73,12 +70,9 @@ class _UserNotificationBodyState extends State<UserNotificationBody> {
                               children: [
                                 Text(
                                   '${userToEnroll?.firstName} ${userToEnroll?.lastName}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
-                                notManager.notifications[index].response ==
-                                        'request'
+                                notManager.notifications[index].notificationType == 'request'
                                     ? const Text(' wants to join')
                                     : const Text('approved to join jamiya')
                               ],
@@ -87,81 +81,75 @@ class _UserNotificationBodyState extends State<UserNotificationBody> {
                         ),
                       ],
                     ),
-                    notManager.notifications[index].response == 'request'
+                    notManager.notifications[index].notificationType == 'request'
                         ? Row(
                             children: [
                               ElevatedButton(
-                                style:
-                                    Theme.of(context).elevatedButtonTheme.style,
+                                style: Theme.of(context).elevatedButtonTheme.style,
                                 child: const Text('Approve'),
                                 onPressed: () async {
                                   User? currentUser;
                                   await appCache
                                       .getCurrentUser()
                                       .then((value) => currentUser = value);
-                                  List<String>? participants =
-                                      jamiya?.participantsId;
-                                  List<String>? userJamiyat =
-                                      userToEnroll?.registeredJamiyaID;
-                                  if (!participants!
-                                      .contains(userToEnroll?.id)) {
-                                    participants.removeWhere(
-                                        (element) => element == '');
-                                    userJamiyat?.removeWhere(
-                                        (element) => element == '');
+                                  List<String>? participants = jamiya?.participantsId;
+                                  List<String>? userJamiyat = userToEnroll?.registeredJamiyaID;
+                                  if (!participants!.contains(userToEnroll?.id)) {
+                                    participants.removeWhere((character) => character == '');
+                                    userJamiyat?.removeWhere((character) => character == '');
                                     participants.add('${userToEnroll?.id}');
-                                    userToEnroll?.registeredJamiyaID
-                                        .add('${jamiya?.id}');
+                                    userToEnroll?.registeredJamiyaID.add('${jamiya?.id}');
                                     DateTime? endDate = jamiya?.startingDate
-                                        .add(Duration(
-                                            days: 30 * participants.length));
+                                        .add(Duration(days: 30 * participants.length));
                                     jamiya?.endingDate = endDate!;
                                     String notificationDate =
-                                        DateFormat('yyyy-MM-dd')
-                                            .format(DateTime.now());
-                                    MyNotification newNotification =
-                                        MyNotification(
-                                            '1',
-                                            jamiya!.id,
-                                            userToEnroll!.id,
-                                            currentUser!.id,
-                                            notificationDate,
-                                            'response',
-                                            'true');
+                                        DateFormat('yyyy-MM-dd').format(DateTime.now());
+                                    MyNotification responseNotification = MyNotification(
+                                        '1',
+                                        jamiya!.id,
+                                        userToEnroll!.id,
+                                        currentUser!.id,
+                                        notificationDate,
+                                        'response');
                                     if (mounted) {
-                                      Provider.of<JamiyaManager>(context,
-                                              listen: false)
+                                      Provider.of<JamiyaManager>(context, listen: false)
                                           .updateItem(jamiya!);
-                                      Provider.of<AppStateManager>(context,
-                                              listen: false)
+                                      Provider.of<AppStateManager>(context, listen: false)
                                           .updateUser(userToEnroll!);
-                                      Provider.of<NotificationManager>(context,
-                                              listen: false)
-                                          .deleteNotification(
-                                              notManager.notifications[index]);
-                                      Provider.of<NotificationManager>(context,
-                                              listen: false)
-                                          .addNotification(newNotification);
+                                      Provider.of<NotificationManager>(context, listen: false)
+                                          .deleteNotification(notManager.notifications[index]);
+                                      Provider.of<NotificationManager>(context, listen: false)
+                                          .addNotification(responseNotification);
                                     }
                                   }
-                                  //ToDo else add message user already enrolled
                                 },
                               ),
                               ElevatedButton(
                                   onPressed: () =>
-                                      Provider.of<NotificationManager>(context,
-                                              listen: false)
-                                          .deleteNotification(
-                                              notManager.notifications[index]),
+                                      Provider.of<NotificationManager>(context, listen: false)
+                                          .deleteNotification(notManager.notifications[index]),
                                   child: const Text('Ignore')),
                             ],
                           )
-                        : const SizedBox()
+                        : SizedBox(
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: ElevatedButton(
+                                      onPressed: () =>
+                                          Provider.of<NotificationManager>(context, listen: false)
+                                              .deleteNotification(notManager.notifications[index]),
+                                      child: const Text('Ok')),
+                                )
+                              ],
+                            ),
+                          )
                   ],
                 ),
               );
             },
-          );
+          ): const Center(child: Text('لا يوجد اشعارات'),);
         },
       ),
     );

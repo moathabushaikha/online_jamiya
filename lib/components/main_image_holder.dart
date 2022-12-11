@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:online_jamiya/api/api.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:online_jamiya/theme.dart';
 import 'package:provider/provider.dart';
@@ -17,14 +18,19 @@ class MainImageHolder extends StatefulWidget {
 }
 
 class _MainImageHolderState extends State<MainImageHolder> {
-  File? image;
+  File? fileImage;
 
   Future pickImage() async {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
       if (image == null) return;
       final imageTemp = File(image.path);
-      setState(() => this.image = imageTemp);
+      setState(() {
+        fileImage = imageTemp;
+        widget.cUser?.imgUrl = image.path;
+        Provider.of<AppStateManager>(context, listen: false)
+            .updateUser(widget.cUser!);
+      });
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');
     }
@@ -38,10 +44,7 @@ class _MainImageHolderState extends State<MainImageHolder> {
         Consumer<AppStateManager>(
           builder: (context, appStateManager, child) {
             return Container(
-              width: double.infinity,
-              height: 205,
-              color: Theme.of(context).backgroundColor
-            );
+                width: double.infinity, height: 205, color: Theme.of(context).backgroundColor);
           },
         ),
         Positioned(
@@ -54,9 +57,11 @@ class _MainImageHolderState extends State<MainImageHolder> {
               padding: const EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: image != null
-                      ? FileImage(image!)
-                      : const AssetImage('assets/profile_images/profile_image.png') as ImageProvider,
+                  image: widget.cUser!.imgUrl.isNotEmpty ?
+                  FileImage(File(widget.cUser?.imgUrl  as String))
+                      :const AssetImage(
+                    'assets/profile_images/profile_image.png',
+                  ) as ImageProvider,
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(width: 2.0, color: Colors.white),
