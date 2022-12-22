@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:online_jamiya/api/api.dart';
 import 'package:online_jamiya/models/models.dart';
-import 'package:online_jamiya/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:online_jamiya/managers/managers.dart';

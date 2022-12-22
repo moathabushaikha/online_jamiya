@@ -22,7 +22,7 @@ class _ParticipantsListViewState extends State<ParticipantsListView> {
       height: 150,
       width: 135,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
         border: Border.all(width: 3,color: Colors.indigo.shade100)
       ),
       child: Column(

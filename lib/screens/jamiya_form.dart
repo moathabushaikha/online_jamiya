@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:online_jamiya/managers/managers.dart';
 
 class JamiyaForm extends StatefulWidget {

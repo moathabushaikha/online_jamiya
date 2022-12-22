@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:online_jamiya/models/models.dart';
-import 'package:go_router/go_router.dart';
 
 class JamiyaThumbnail extends StatelessWidget {
   final Jamiya? jamiya;

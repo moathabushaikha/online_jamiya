@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:online_jamiya/api/api_service.dart';
 import 'package:provider/provider.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:online_jamiya/api/api.dart';
@@ -12,6 +13,7 @@ class JamiyaTabs {
 
 class AppStateManager extends ChangeNotifier {
   final _appCache = AppCache();
+  ApiService apiService = ApiService();
   final SqlService sqlService = SqlService();
   User? _currentUser;
   bool _loggedIn = false;
@@ -40,9 +42,10 @@ class AppStateManager extends ChangeNotifier {
   }
 
   void register(User registeredUser) async {
-    int id = await sqlService.createUser(registeredUser);
-    User? userFromDb = await sqlService.readSingleUser(id);
-    await _appCache.setCurrentUser(userFromDb);
+    // int id = await sqlService.createUser(registeredUser);
+    // User? userFromDb = await sqlService.readSingleUser(id);
+    await apiService.createUser(registeredUser);
+    //await _appCache.setCurrentUser(userFromDb);
     _loggedIn = true;
     notifyListeners();
   }
