@@ -29,13 +29,12 @@ class Jamiya {
   Map<String, dynamic> toJson() {
     var formatter = DateFormat('yyyy-MM-dd');
     final map = <String, dynamic>{
-      JamiyaTable.id: id,
       JamiyaTable.name: name,
       JamiyaTable.startingDate: formatter.format(startingDate),
       JamiyaTable.endingDate: formatter.format(endingDate),
-      JamiyaTable.shareAmount: shareAmount.toString(),
-      JamiyaTable.maxParticipants: maxParticipants.toString(),
-      JamiyaTable.participantsId: participantsId ?? '',
+      JamiyaTable.shareAmount: shareAmount,
+      JamiyaTable.maxParticipants: maxParticipants,
+      JamiyaTable.participantsId: participantsId.join(),
       JamiyaTable.creatorId: creatorId,
     };
     return map;
@@ -56,24 +55,15 @@ class Jamiya {
   }
 
   factory Jamiya.fromMap(Map<String, dynamic> json) {
-    String cid = json['id'].toString();
-    List<String> participants = [];
-    if (json[JamiyaTable.participantsId].runtimeType == String) {
-      participants = json[JamiyaTable.participantsId].split(',');
-    } else {
-      for (var element in json[JamiyaTable.participantsId]) {
-        participants.add(element.toString());
-      }
-    }
     return Jamiya(
-      cid,
-      participants,
+      json['_id'],
+      json[JamiyaTable.participantsId].split(","),
       name: json[JamiyaTable.name],
-      maxParticipants: int.parse(json[JamiyaTable.maxParticipants]),
+      maxParticipants: json[JamiyaTable.maxParticipants],
       startingDate: DateTime.parse(json[JamiyaTable.startingDate]),
       endingDate: DateTime.parse(json[JamiyaTable.endingDate]),
       creatorId: json[JamiyaTable.creatorId].toString(),
-      shareAmount: int.parse(json[JamiyaTable.shareAmount]),
+      shareAmount: json[JamiyaTable.shareAmount],
     );
   }
 }

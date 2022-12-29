@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:online_jamiya/models/models.dart';
 
@@ -15,7 +17,10 @@ class AppCache {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString(currentUser, currentUserStr);
   }
-
+  Future<void> setToken(String resBody)async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("token", jsonDecode(resBody)['token']);
+  }
   Future<void> setJamiyat(List<Jamiya>? allJamiyat) async {
     final prefs = await SharedPreferences.getInstance();
     List<String> jamiyaItemsList = [];

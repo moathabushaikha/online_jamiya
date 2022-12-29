@@ -7,15 +7,15 @@ import 'package:online_jamiya/managers/managers.dart';
 import 'dart:io';
 
 class MainImageHolder extends StatefulWidget {
-  final User? cUser;
-
-  const MainImageHolder({Key? key, required this.cUser}) : super(key: key);
+  final User? currentUser;
+  const MainImageHolder({Key? key, required this.currentUser}) : super(key: key);
 
   @override
   State<MainImageHolder> createState() => _MainImageHolderState();
 }
 
 class _MainImageHolderState extends State<MainImageHolder> {
+
   File? fileImage;
 
   Future pickImage() async {
@@ -25,9 +25,9 @@ class _MainImageHolderState extends State<MainImageHolder> {
       final imageTemp = File(image.path);
       setState(() {
         fileImage = imageTemp;
-        widget.cUser?.imgUrl = image.path;
+        widget.currentUser?.imgUrl = image.path;
         Provider.of<AppStateManager>(context, listen: false)
-            .updateUser(widget.cUser!);
+            .updateUser(widget.currentUser!);
       });
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');
@@ -55,8 +55,8 @@ class _MainImageHolderState extends State<MainImageHolder> {
               padding: const EdgeInsets.only(top: 10),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: widget.cUser!.imgUrl.isNotEmpty ?
-                  FileImage(File(widget.cUser?.imgUrl  as String))
+                  image: widget.currentUser?.imgUrl != "" ?
+                  FileImage(File(widget.currentUser?.imgUrl  as String))
                       :const AssetImage(
                     'assets/profile_images/profile_image.png',
                   ) as ImageProvider,
@@ -75,7 +75,7 @@ class _MainImageHolderState extends State<MainImageHolder> {
             children: [
               const Text('Welcome'),
               Text(
-                '${widget.cUser?.firstName} ${widget.cUser?.lastName}',
+                '${widget.currentUser?.firstName} ${widget.currentUser?.lastName}',
                 style: Theme.of(context).textTheme.headline3,
               ),
               const SizedBox(

@@ -6,6 +6,7 @@ import 'package:online_jamiya/models/models.dart';
 class NotificationManager extends ChangeNotifier {
   final AppCache _appCache = AppCache();
   final SqlService sqlService = SqlService();
+  final ApiService apiService = ApiService();
   List<MyNotification>? _notifications;
 
   List<MyNotification> get notifications {
@@ -28,29 +29,26 @@ class NotificationManager extends ChangeNotifier {
   }
 
   void addNotification(MyNotification notification) async {
-    int newNotificationId = await sqlService.createNotification(notification);
-    MyNotification newNotification =
-        await sqlService.readSingleNotification(newNotificationId.toString());
+    // int newNotificationId = await sqlService.createNotification(notification);
+    // MyNotification newNotification =
+    //    await sqlService.readSingleNotification(newNotificationId.toString());
+    MyNotification newNotification =  await apiService.createNotification(notification);
     _notifications?.add(newNotification);
     if (_notifications != null) {
       _appCache.setNotificationsList(_notifications!);
       notifyListeners();
     }
   }
-
+  Future <List<MyNotification>?> getAllNotification() async{
+    _notifications = await apiService.getAllNotifications();
+    return _notifications;
+  }
   void deleteNotification(MyNotification? myNotification) async {
     _notifications?.removeWhere((element) => element == myNotification);
     if (myNotification != null) {
-      await sqlService.deleteNotification(myNotification.id);
+      await apiService.deleteNotification(myNotification);
     }
     await _appCache.setNotificationsList(_notifications!);
-    notifyListeners();
-  }
-
-  Future<void> updateItem(MyNotification myNotification, index) async {
-    await sqlService.updateNotification(myNotification);
-    MyNotification updatedNotification = await sqlService.readSingleNotification(myNotification.id);
-    _notifications![index] = updatedNotification;
     notifyListeners();
   }
 }

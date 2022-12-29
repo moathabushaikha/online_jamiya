@@ -18,16 +18,18 @@ class ExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  SqlService sqlService = SqlService();
+  // SqlService sqlService = SqlService();
+  ApiService apiService = ApiService();
 
   @override
   Widget build(BuildContext context) {
+    // print('explore');
+    Provider.of<JamiyaManager>(context).getJamiyat();
     return Scaffold(
       body:
           // #create a consumer when user asks to enroll to a specific jamiya and approved it will rebuild#
           Consumer<JamiyaManager>(
         builder: (context, manager, child) {
-          fillJamiyat(manager);
           if (manager.jamiyaItems.isNotEmpty) {
             // # list of all created jamiyas #
             return ListView.builder(
@@ -44,7 +46,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 DateTime endDate = startDate.add(Duration(days: 30 * numberOfParticipants));
                 // updating Jamiya ending date
                 manager.jamiyaItems[index].endingDate = endDate;
-                sqlService.updateJamiya(manager.jamiyaItems[index]);
+                apiService.updateJamiya(manager.jamiyaItems[index]);
+                // sqlService.updateJamiya(manager.jamiyaItems[index]);
                 // changing the format of jamiya (creation, ending) date for the listView item
                 String formattedSDate = DateFormat('dd/MM/yy').format(startDate);
                 String formattedEDate = DateFormat('dd/MM/yy').format(endDate);
@@ -80,8 +83,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   FutureBuilder(
-                                    future: sqlService.readSingleUser(
-                                        int.parse(manager.jamiyaItems[index].creatorId.toString())),
+                                    // future: sqlService.readSingleUser(
+                                    //     int.parse(manager.jamiyaItems[index].creatorId.toString())),
+                                    future: apiService.getUserById(
+                                        manager.jamiyaItems[index].creatorId.toString()),
                                     builder: (context, snapshot) => Text(
                                       'creator : ${snapshot.data?.firstName} ${snapshot.data?.lastName}',
                                       style: Theme.of(context).textTheme.bodyText1,
@@ -122,32 +127,29 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             ElevatedButton(
                               style: Theme.of(context).elevatedButtonTheme.style,
                               onPressed: () async {
-                                DateTime now = DateTime.now();
-                                String notificationDate = DateFormat('yyyy-MM-dd').format(now);
-                                // check if the user isn't in this jamiya
-                                if (!manager.jamiyaItems[index].participantsId
-                                    .contains(widget.currentUser?.id)) {
-                                  List<MyNotification> allNotifications =
-                                      await sqlService.allNotifications();
-                                  // check if the user didn't send request to join more than once
-                                  if (notificationNotExist(widget.currentUser?.id,
-                                      manager.jamiyaItems[index], allNotifications)) {
-                                    MyNotification newNotification = MyNotification(
-                                        '1',
-                                        manager.jamiyaItems[index].id,
-                                        manager.jamiyaItems[index].creatorId!,
-                                        widget.currentUser!.id,
-                                        notificationDate,
-                                        'request');
-                                    if (mounted) {
-                                      Provider.of<NotificationManager>(context, listen: false)
-                                          .addNotification(newNotification);
-                                    }
-                                  } else {
-                                    messageDialog('Enroll Control','you already send a request');
-                                  }
-                                } else {
-                                  messageDialog('Enroll Control','you already enrolled');
+                                // check if the user is not already enrolled in the jamiya
+                                if (isUserEnrolled(
+                                    manager.jamiyaItems[index], widget.currentUser)) {
+                                  messageDialog('Enroll Control', 'you already enrolled');
+                                  return;
+                                }
+                                // check if the user already sent a request to join
+                                if (await notificationExist(
+                                    widget.currentUser?.id, manager.jamiyaItems[index])) {
+                                  messageDialog('Enroll Control', 'you already send a request');
+                                  return;
+                                }
+                                // send request to join notification to jamiya creator
+                                MyNotification newNotification = MyNotification(
+                                    '1',
+                                    manager.jamiyaItems[index].id,
+                                    manager.jamiyaItems[index].creatorId!,
+                                    widget.currentUser!.id,
+                                    DateFormat('yyyy-MM-dd').format(DateTime.now()),
+                                    'request');
+                                if (mounted) {
+                                  Provider.of<NotificationManager>(context, listen: false)
+                                      .addNotification(newNotification);
                                 }
                               },
                               child: Text('Enroll', style: Theme.of(context).textTheme.button),
@@ -220,22 +222,24 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  void fillJamiyat(manager) async {
-    await manager.getJamiyat();
+  bool isUserEnrolled(Jamiya selectedJamiya, User? userToEnroll) {
+    if (selectedJamiya.participantsId.contains(userToEnroll?.id)) return true;
+    return false;
   }
 
-  bool notificationNotExist(
-      String? userFromId, Jamiya selectedJamiya, List<MyNotification> allNotifications) {
+  Future<bool> notificationExist(String? userFromId, Jamiya selectedJamiya) async {
+    List<MyNotification>? allNotifications = await apiService.getAllNotifications();
     for (int i = 0; i < allNotifications.length; i++) {
       if (allNotifications[i].jamiyaId == selectedJamiya.id) {
         if (allNotifications[i].userFromNoti == userFromId) {
-          return false;
+          return true;
         }
       }
     }
-    return true;
+    return false;
   }
-  Future<String?> messageDialog(String title,String message){
+
+  Future<String?> messageDialog(String title, String message) {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(

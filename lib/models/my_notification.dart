@@ -25,11 +25,11 @@ class MyNotification {
 
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{
-      'CREATOR_ID': userToNoti,
-      'JAMIYA_ID': jamiyaId,
-      'PARTICIPANT_ID': userFromNoti,
-      'REQUEST_DATE': notificationDate,
-      'NOTIFICATION_TYPE': notificationType,
+      'jamiyaId': jamiyaId,
+      'userToNoti': userToNoti,
+      'userFromNoti': userFromNoti,
+      'notificationDate': notificationDate,
+      'notificationType': notificationType,
     };
     return map;
   }
@@ -48,12 +48,12 @@ class MyNotification {
 
   factory MyNotification.fromMap(Map<String, dynamic> map) {
     return MyNotification(
-      map['ID'].toString(),
-      map['JAMIYA_ID'],
-      map['CREATOR_ID'],
-      map['PARTICIPANT_ID'],
-      map['REQUEST_DATE'],
-      map['NOTIFICATION_TYPE'],
+      map['_id'].toString(),
+      map['jamiyaId'],
+      map['userToNoti'],
+      map['userFromNoti'],
+      map['notificationDate'],
+      map['notificationType'],
     );
   }
 }

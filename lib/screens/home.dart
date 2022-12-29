@@ -10,7 +10,6 @@ import 'screens.dart';
 
 class Home extends StatefulWidget {
   final int currentTab;
-
   const Home({Key? key, required this.currentTab}) : super(key: key);
 
   @override
@@ -18,33 +17,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  User? currentUser;
-  final AppCache _appCache = AppCache();
   JamiyaManager manager = JamiyaManager();
   List<Jamiya>? userRegisteredJamiyas;
   SqlService sqlService = SqlService();
+  ApiService apiService = ApiService();
   List<MyNotification> currentUserNotifications = [];
 
   @override
-  void initState() {
-    super.initState();
-    getCurrentUser();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // print('home');
+    final ctUser = Provider.of<AppStateManager>(context).currentUser;
     List<Widget> pages = <Widget>[
-      Consumer2<AppStateManager, JamiyaManager>(
-        builder: (context, appStateManager, jamiyaManager, child) {
-          return MainScreen(
-              currentUser: currentUser,
-              appStateManager: appStateManager,
-              jamiyaManager: jamiyaManager);
-        },
-      ),
-      ExploreScreen(
-        currentUser: currentUser,
-      ),
+      MainScreen(currentUser: ctUser),
+      ExploreScreen(currentUser: ctUser),
     ];
     Widget profileButton(int currentTab) {
       return Padding(
@@ -52,8 +37,8 @@ class _HomeState extends State<Home> {
         child: GestureDetector(
           child: Center(
             child: CircleAvatar(
-                backgroundImage: currentUser?.imgUrl.length != 0
-                    ? FileImage(File('${currentUser?.imgUrl}'), scale: 0.5)
+                backgroundImage: ctUser!.imgUrl.isNotEmpty
+                    ? FileImage(File(ctUser.imgUrl), scale: 0.5)
                     : const AssetImage(
                         'assets/profile_images/profile_image.png',
                       ) as ImageProvider),
@@ -76,12 +61,12 @@ class _HomeState extends State<Home> {
             Consumer<NotificationManager>(
               builder: (context, notificationManager, child) {
                 return FutureBuilder(
-                  future: sqlService.allNotifications(),
-                  builder: (context, AsyncSnapshot<List<MyNotification>> snapshot) {
+                  future: apiService.getAllNotifications(),
+                  builder: (context, AsyncSnapshot<List<MyNotification>?> snapshot) {
                     currentUserNotifications = [];
                     if (snapshot.data != null) {
                       for (var i = 0; i < snapshot.data!.length; i++) {
-                        if (snapshot.data![i].userToNoti == currentUser?.id) {
+                        if (snapshot.data![i].userToNoti == ctUser?.id) {
                           currentUserNotifications.add(snapshot.data![i]);
                         }
                       }
@@ -147,12 +132,5 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
-  }
-
-  void getCurrentUser() async {
-    User? cUser = await _appCache.getCurrentUser();
-    setState(() {
-      currentUser = cUser;
-    });
   }
 }

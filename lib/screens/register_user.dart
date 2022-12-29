@@ -135,10 +135,11 @@ class _RegisterUserState extends State<RegisterUser> {
                     darkMode: isDark,
                     registeredJamiyaID: [],
                     imgUrl: '',
+                    token: ''
                   );
                   Provider.of<ProfileManager>(context, listen: false).setUserDarkMode(user);
                   Provider.of<AppStateManager>(context, listen: false)
-                      .register(user);
+                      .register(user,context);
                 }
               },
               child: const Text('Register New User'),

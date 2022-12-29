@@ -16,6 +16,7 @@ class User {
   bool darkMode;
   List<String> registeredJamiyaID;
   String imgUrl;
+  String token;
 
   User(
     this.id, {
@@ -26,6 +27,7 @@ class User {
     required this.imgUrl,
     required this.registeredJamiyaID,
     required this.darkMode,
+    required this.token
   });
 
   Map<String, dynamic> toJson() {
@@ -38,6 +40,7 @@ class User {
       UserTableCols.imgUrlCol: imgUrl,
       UserTableCols.darkModeCol: darkMode.toString(),
       UserTableCols.registeredJamiyaID: registeredJamiyaID.join(","),
+      UserTableCols.token: token
     };
     return map;
   }
@@ -57,7 +60,7 @@ class User {
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      map['id'].toString(),
+      map['_id'].toString(),
       firstName: map[UserTableCols.firstNameCol],
       lastName: map[UserTableCols.lastNameCol],
       userName: map[UserTableCols.userNameCol],
@@ -65,6 +68,7 @@ class User {
       imgUrl: map[UserTableCols.imgUrlCol],
       darkMode: map[UserTableCols.darkModeCol] == 'false' ? false : true,
       registeredJamiyaID: map[UserTableCols.registeredJamiyaID].split(','),
+      token: map['token'] ?? ''
     );
   }
 }

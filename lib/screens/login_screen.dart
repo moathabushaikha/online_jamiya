@@ -88,9 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     formKey.currentState?.save();
                     Provider.of<AppStateManager>(context, listen: false)
                         .login(userName, password, context);
-                    if (!AppStateManager().isLoggedIn){
-                      messageDialog('Authentication Error','User doesn\'t exist');
-                    }
+                    // if (!AppStateManager().isLoggedIn){
+                    //   messageDialog('Authentication Error','User doesn\'t exist');
+                    // }
                   }
 
                 },

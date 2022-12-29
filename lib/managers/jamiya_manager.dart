@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:online_jamiya/api/api.dart';
+import 'package:online_jamiya/api/api_service.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:online_jamiya/managers/managers.dart';
 
 class JamiyaManager extends ChangeNotifier {
   final AppCache _appCache = AppCache();
-  final SqlService sqlService = SqlService();
+  // final SqlService sqlService = SqlService();
+  final apiService = ApiService();
   List<Jamiya>? _jamiyaItems;
 
   List<Jamiya> get jamiyaItems {
@@ -16,22 +18,25 @@ class JamiyaManager extends ChangeNotifier {
     }
   }
 
-  Future<void> getJamiyat() async {
-    _jamiyaItems = await _appCache.allJamiyat();
+  void getJamiyat() async {
+   // _jamiyaItems = await _appCache.allJamiyat();
+    _jamiyaItems = await apiService.getAllJamiyas();
   }
 
   void deleteJamiyaItem(int index) async {
     jamiyaItems.removeAt(index);
-    await sqlService.deleteJamiya((index + 1).toString());
+   // await sqlService.deleteJamiya((index + 1).toString());
+    //TODO delete jamiya from mongooDb
     notifyListeners();
   }
 
 
   void addJamiyaItem(Jamiya item) async {
-    getJamiyat();
-    int newJamiyaId = await sqlService.createJamiya(item);
-    Jamiya newJamiya =
-        await sqlService.readSingleJamiya(newJamiyaId.toString());
+    // getJamiyat();
+    // int newJamiyaId = await sqlService.createJamiya(item);
+    Jamiya newJamiya = await apiService.createJamiya(item);
+    // Jamiya newJamiya =
+    //     await sqlService.readSingleJamiya(newJamiyaId.toString());
     _jamiyaItems?.add(newJamiya);
     _appCache.setJamiyat(_jamiyaItems!);
     notifyListeners();
@@ -39,9 +44,10 @@ class JamiyaManager extends ChangeNotifier {
 
   Future<void> updateItem(Jamiya jamiyaItem) async {
     int index = _jamiyaItems!.indexWhere((element) => jamiyaItem.id == element.id);
-    await sqlService.updateJamiya(jamiyaItem);
-    Jamiya updatedJamiya = await sqlService.readSingleJamiya(jamiyaItem.id);
-    _jamiyaItems![index] = updatedJamiya;
+    Jamiya updatedJamiya = await apiService.updateJamiya(jamiyaItem);
+    //await sqlService.updateJamiya(jamiyaItem);
+    //Jamiya updatedJamiya = await sqlService.readSingleJamiya(jamiyaItem.id);
+   _jamiyaItems![index] = updatedJamiya;
     _appCache.setJamiyat(_jamiyaItems!);
     notifyListeners();
   }

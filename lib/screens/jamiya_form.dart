@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:go_router/go_router.dart';
 import 'package:online_jamiya/managers/managers.dart';
+import 'package:provider/provider.dart';
 
 class JamiyaForm extends StatefulWidget {
   final Function(Jamiya) onCreate;
   final int index;
 
-  const JamiyaForm(
-      {Key? key,
-      required this.onCreate,
-      this.index = -1})
-      : super(key: key);
+  const JamiyaForm({Key? key, required this.onCreate, this.index = -1}) : super(key: key);
 
   @override
   State<JamiyaForm> createState() => _JamiyaFormState();
@@ -22,17 +19,15 @@ class _JamiyaFormState extends State<JamiyaForm> {
   final TextEditingController _shareAmount = TextEditingController();
   final TextEditingController _maxParticipants = TextEditingController();
   DateTime dateTimeFrom = DateTime.now();
-  final AppCache _appCache = AppCache();
-  User? currentUser;
 
   @override
   void initState() {
     super.initState();
-    getCurrentUser();
   }
 
   @override
   Widget build(BuildContext context) {
+    User? currentUser = Provider.of<AppStateManager>(context).currentUser;
     Widget buildTextField(String hintText, TextEditingController controller) {
       return TextField(
         controller: controller,
@@ -64,10 +59,7 @@ class _JamiyaFormState extends State<JamiyaForm> {
             ),
             Text(
               'الرجاء ادخال معلومات الجمعية',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .headline1,
+              style: Theme.of(context).textTheme.headline1,
             ),
             const SizedBox(
               height: 16,
@@ -104,9 +96,7 @@ class _JamiyaFormState extends State<JamiyaForm> {
                   },
                   child: Row(
                     children: [
-                      Text(
-                          '${dateTimeFrom.year}/${dateTimeFrom
-                              .month}/${dateTimeFrom.day}'),
+                      Text('${dateTimeFrom.year}/${dateTimeFrom.month}/${dateTimeFrom.day}'),
                       const SizedBox(
                         width: 10,
                       ),
@@ -117,52 +107,38 @@ class _JamiyaFormState extends State<JamiyaForm> {
               ],
             ),
             SizedBox(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width / 4,
-              child:
-                   OutlinedButton(
-                     style: Theme.of(context).outlinedButtonTheme.style,
-                    child: const Text(
-                      'create jamiya',
-                    ),
-                    onPressed: () {
-                      Jamiya newJamiya = Jamiya(
-                        '1',
-                        [],
-                        name: _jamiyaName.text,
-                        startingDate: dateTimeFrom,
-                        endingDate: dateTimeFrom,
-                        maxParticipants:
-                        int.parse(_maxParticipants.text.toString()),
-                        creatorId: currentUser?.id,
-                        shareAmount: int.parse(_shareAmount.text),
-                      );
-                      widget.onCreate(newJamiya);
-                      context.goNamed('home',
-                          params: {'tab': '${JamiyaTabs.explore}'});
-                    },
-                  ),
+              width: MediaQuery.of(context).size.width / 4,
+              child: OutlinedButton(
+                style: Theme.of(context).outlinedButtonTheme.style,
+                child: const Text(
+                  'create jamiya',
+                ),
+                onPressed: () {
+                  Jamiya newJamiya = Jamiya(
+                    '1',
+                    [],
+                    name: _jamiyaName.text,
+                    startingDate: dateTimeFrom,
+                    endingDate: dateTimeFrom,
+                    maxParticipants: int.parse(_maxParticipants.text.toString()),
+                    creatorId: currentUser?.id,
+                    shareAmount: int.parse(_shareAmount.text),
+                  );
+                  widget.onCreate(newJamiya);
+                  context.goNamed('home', params: {'tab': '${JamiyaTabs.explore}'});
+                },
               ),
-
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<DateTime?> pickDate() =>
-      showDatePicker(
-          context: context,
-          initialDate: dateTimeFrom,
-          firstDate: DateTime.now(),
-          lastDate: DateTime.now().add(const Duration(days: 1000)));
-
-  void getCurrentUser() async {
-    User? cUser = await _appCache.getCurrentUser();
-    setState(() {
-      currentUser = cUser;
-    });
-  }
+  Future<DateTime?> pickDate() => showDatePicker(
+        context: context,
+        initialDate: dateTimeFrom,
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(const Duration(days: 1000)),
+      );
 }
