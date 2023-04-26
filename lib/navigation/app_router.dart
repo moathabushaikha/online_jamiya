@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:online_jamiya/managers/managers.dart';
+import 'package:provider/provider.dart';
 import '../screens/screens.dart';
 
 class AppRouter {
@@ -37,7 +38,9 @@ class AppRouter {
         path: '/:tab',
         builder: (context, state) {
           final tab = int.tryParse(state.params['tab'] ?? '') ?? 0;
-          return Home(key: state.pageKey, currentTab: tab);
+          return Consumer<NotificationManager>(
+            builder: (context, value, child) => Home(key: state.pageKey, currentTab: tab),
+          );
         },
         routes: [
           GoRoute(
@@ -61,7 +64,8 @@ class AppRouter {
             builder: (context, state) {
               return JamiyaForm(
                 onCreate: (item) {
-                  jamiyaManager.addJamiyaItem(item);
+                  Provider.of<JamiyaManager>(context, listen: false)
+                      .addJamiyaItem(item, context);
                 },
               );
             },

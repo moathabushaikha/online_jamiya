@@ -8,6 +8,7 @@ import 'dart:io';
 
 class MainImageHolder extends StatefulWidget {
   final User? currentUser;
+
   const MainImageHolder({Key? key, required this.currentUser}) : super(key: key);
 
   @override
@@ -15,7 +16,6 @@ class MainImageHolder extends StatefulWidget {
 }
 
 class _MainImageHolderState extends State<MainImageHolder> {
-
   File? fileImage;
 
   Future pickImage() async {
@@ -26,8 +26,7 @@ class _MainImageHolderState extends State<MainImageHolder> {
       setState(() {
         fileImage = imageTemp;
         widget.currentUser?.imgUrl = image.path;
-        Provider.of<AppStateManager>(context, listen: false)
-            .updateUser(widget.currentUser!);
+        Provider.of<AppStateManager>(context, listen: false).updateUser(widget.currentUser!);
       });
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');
@@ -51,15 +50,19 @@ class _MainImageHolderState extends State<MainImageHolder> {
             onTap: pickImage,
             child: Container(
               width: 200,
-              height: 200,
-              padding: const EdgeInsets.only(top: 10),
+              height: 180,
+              margin: const EdgeInsets.only(top: 10,bottom: 10),
+              padding: const EdgeInsets.only(bottom: 10),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: widget.currentUser?.imgUrl != "" ?
-                  FileImage(File(widget.currentUser?.imgUrl  as String))
-                      :const AssetImage(
-                    'assets/profile_images/profile_image.png',
-                  ) as ImageProvider,
+                  image: widget.currentUser?.imgUrl != ""
+                      ? FileImage(widget.currentUser != null
+                          ? File(widget.currentUser?.imgUrl as String)
+                          : File(''))
+                      : const AssetImage(
+                          'assets/profile_images/profile_image.png',
+                        ) as ImageProvider,
+                  scale: 2.0,
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(width: 2.0, color: Colors.white),

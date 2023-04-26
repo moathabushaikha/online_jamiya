@@ -19,15 +19,17 @@ class _JamiyaFormState extends State<JamiyaForm> {
   final TextEditingController _shareAmount = TextEditingController();
   final TextEditingController _maxParticipants = TextEditingController();
   DateTime dateTimeFrom = DateTime.now();
+  AppCache appCache = AppCache();
+  User? currentUser;
 
   @override
   void initState() {
+    getCurrentUser();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    User? currentUser = Provider.of<AppStateManager>(context).currentUser;
     Widget buildTextField(String hintText, TextEditingController controller) {
       return TextField(
         controller: controller,
@@ -141,4 +143,9 @@ class _JamiyaFormState extends State<JamiyaForm> {
         firstDate: DateTime.now(),
         lastDate: DateTime.now().add(const Duration(days: 1000)),
       );
+
+
+  void getCurrentUser() async {
+    await appCache.getCurrentUser().then((value) => setState(() => currentUser = value));
+  }
 }

@@ -3,7 +3,6 @@ import 'package:online_jamiya/api/api.dart';
 import 'package:online_jamiya/models/models.dart';
 
 class ProfileManager extends ChangeNotifier {
-  SqlService sqlService = SqlService();
   bool get didSelectUser => _didSelectUser;
 
   bool get darkMode => _darkMode;

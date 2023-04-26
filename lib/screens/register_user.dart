@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:provider/provider.dart';
 import 'package:online_jamiya/managers/managers.dart';
+import 'package:dart_encrypter/dart_encrypter.dart';
 
 class RegisterUser extends StatefulWidget {
   const RegisterUser({Key? key}) : super(key: key);
@@ -12,12 +13,7 @@ class RegisterUser extends StatefulWidget {
 
 class _RegisterUserState extends State<RegisterUser> {
   final formKey = GlobalKey<FormState>();
-  String userName = '',
-      firstName = '',
-      lastName = '',
-      password = '',
-      darkMode = '',
-      imgUrl = '';
+  String userName = '', firstName = '', lastName = '', password = '', darkMode = '', imgUrl = '';
   List<int> friends = [];
   bool isDark = false;
 
@@ -34,8 +30,8 @@ class _RegisterUserState extends State<RegisterUser> {
             ),
             // user name
             TextFormField(
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), labelText: 'User Name'),
+              decoration:
+                  const InputDecoration(border: OutlineInputBorder(), labelText: 'User Name'),
               onSaved: (value) {
                 setState(() {
                   userName = value!;
@@ -53,8 +49,8 @@ class _RegisterUserState extends State<RegisterUser> {
             ),
             // first name
             TextFormField(
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), labelText: 'First Name'),
+              decoration:
+                  const InputDecoration(border: OutlineInputBorder(), labelText: 'First Name'),
               onSaved: (value) {
                 setState(() {
                   firstName = value!;
@@ -72,8 +68,8 @@ class _RegisterUserState extends State<RegisterUser> {
             ),
             // last name
             TextFormField(
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), labelText: 'Last Name'),
+              decoration:
+                  const InputDecoration(border: OutlineInputBorder(), labelText: 'Last Name'),
               onSaved: (value) {
                 setState(() {
                   lastName = value!;
@@ -92,8 +88,8 @@ class _RegisterUserState extends State<RegisterUser> {
             // password
             TextFormField(
               obscureText: true,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), labelText: 'Password'),
+              decoration:
+                  const InputDecoration(border: OutlineInputBorder(), labelText: 'Password'),
               onSaved: (value) {
                 setState(() {
                   password = value!;
@@ -124,22 +120,23 @@ class _RegisterUserState extends State<RegisterUser> {
             OutlinedButton(
               onPressed: () async {
                 final isValid = formKey.currentState?.validate();
+
                 if (isValid!) {
                   formKey.currentState?.save();
-                  User user = User(
-                    '-1',
-                    userName: userName,
-                    firstName: firstName,
-                    lastName: lastName,
-                    password: password,
-                    darkMode: isDark,
-                    registeredJamiyaID: [],
-                    imgUrl: '',
-                    token: ''
-                  );
+                  final String? key = Security.generatePassword(true, true, true, true, 32);
+                  final String? iv = Security.generatePassword(true, true, true, true, 16);
+                  String? encryptedPassword = password.encryptMyData(key!, iv!);
+
+                  User user = User('-1',
+                      userName: userName,
+                      firstName: firstName,
+                      lastName: lastName,
+                      password: encryptedPassword,
+                      darkMode: isDark,
+                      registeredJamiyaID: [],
+                      imgUrl: '');
                   Provider.of<ProfileManager>(context, listen: false).setUserDarkMode(user);
-                  Provider.of<AppStateManager>(context, listen: false)
-                      .register(user,context);
+                  Provider.of<AppStateManager>(context, listen: false).register(user,key,iv,context);
                 }
               },
               child: const Text('Register New User'),

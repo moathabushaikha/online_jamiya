@@ -1,33 +1,32 @@
 import 'dart:convert';
 
-MyNotification notificationFromJson(String str) =>
-    MyNotification.fromMap(json.decode(str));
+import 'package:mongo_dart/mongo_dart.dart';
 
-String notificationToJson(MyNotification data) =>
-    json.encode(data.toMapWithId());
+MyNotification notificationFromJson(String str) => MyNotification.fromMap(json.decode(str));
+
+String notificationToJson(MyNotification data) => json.encode(data.toMapWithId());
 
 class MyNotification {
   String id;
   String jamiyaId;
-  String userToNoti;
-  String userFromNoti;
+  String notificationCreatorId;
+  String notificationReceiverId;
   String notificationDate;
   String notificationType;
 
   MyNotification(
-    this.id,
-    this.jamiyaId,
-    this.userToNoti,
-    this.userFromNoti,
-    this.notificationDate,
-    this.notificationType,
-  );
+      {required this.id,
+      required this.jamiyaId,
+      required this.notificationCreatorId,
+      required this.notificationReceiverId,
+      required this.notificationDate,
+      required this.notificationType});
 
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{
       'jamiyaId': jamiyaId,
-      'userToNoti': userToNoti,
-      'userFromNoti': userFromNoti,
+      'notification_creator_id': notificationCreatorId,
+      'notification_receiver_id': notificationReceiverId,
       'notificationDate': notificationDate,
       'notificationType': notificationType,
     };
@@ -37,23 +36,34 @@ class MyNotification {
   Map<String, dynamic> toMapWithId() {
     final map = <String, dynamic>{
       'ID': id,
-      'CREATOR_ID': userToNoti,
+      'CREATOR_ID': notificationCreatorId,
       'JAMIYA_ID': jamiyaId,
-      'PARTICIPANT_ID': userFromNoti,
+      'PARTICIPANT_ID': notificationReceiverId,
       'REQUEST_DATE': notificationDate,
       'NOTIFICATION_TYPE': notificationType,
     };
     return map;
   }
 
-  factory MyNotification.fromMap(Map<String, dynamic> map) {
-    return MyNotification(
-      map['_id'].toString(),
-      map['jamiyaId'],
-      map['userToNoti'],
-      map['userFromNoti'],
-      map['notificationDate'],
-      map['notificationType'],
-    );
+  factory MyNotification.fromMap(Map<String, Object?>? map) {
+    if (map != null) {
+      ObjectId obid = map['_id'] as ObjectId;
+      return MyNotification(
+        id: obid.$oid,
+        jamiyaId: map['jamiyaId'].toString(),
+        notificationCreatorId: map['notification_creator_id'].toString(),
+        notificationReceiverId: map['notification_receiver_id'].toString(),
+        notificationDate: map['notificationDate'].toString(),
+        notificationType: map['notificationType'].toString(),
+      );
+    } else {
+      return MyNotification(
+          id: '0',
+          jamiyaId: '0',
+          notificationCreatorId: '0',
+          notificationReceiverId: '0',
+          notificationDate: '0',
+          notificationType: '0');
+    }
   }
 }

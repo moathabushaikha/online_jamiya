@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:online_jamiya/api/local_db.dart';
 import 'package:online_jamiya/managers/managers.dart';
 import 'package:online_jamiya/theme.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appStateManager = AppStateManager();
   await appStateManager.initializeApp();
+  await DataBaseConn.instance.getToken();
   runApp(Jamiya(appStateManager: appStateManager));
 }
 
@@ -44,10 +46,9 @@ class _JamiyaState extends State<Jamiya> {
           create: (context) => notificationManager,
         ),
       ],
-      child: Consumer2<ProfileManager, AppStateManager>(
-        builder: (context, profileManager, appStateManager, child) {
+      child: Consumer<ProfileManager>(
+        builder: (context, profileManager, child) {
           ThemeData theme;
-          // print('darkmode: ${profileManager.darkMode}');
           if (profileManager.darkMode) {
             theme = JamiyaTheme.dark();
           } else {

@@ -13,8 +13,7 @@ class ParticipantsListView extends StatefulWidget {
 }
 
 class _ParticipantsListViewState extends State<ParticipantsListView> {
-  final SqlService sqlService = SqlService();
-
+  final ApiService _apiService = ApiService();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,29 +28,29 @@ class _ParticipantsListViewState extends State<ParticipantsListView> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text('Participants'),
-          // topArrow ? const Icon(Icons.arrow_drop_down) : const Icon(
-          //     Icons.arrow_drop_up),
           const SizedBox(
             height: 10,
           ),
           Expanded(
             child: FutureBuilder(
               future:
-                  sqlService.getJamiyaRegisteredUsers(widget.selectedJamiya),
+            _apiService.getJamiyaRegisteredUsers(widget.selectedJamiya),
               builder:
-                  (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+                  (BuildContext context, AsyncSnapshot<List<User>?> snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return ListView.builder(
+                  return snapshot.data != null ?
+                  ListView.builder(
                     itemCount: snapshot.data?.length,
-                    itemBuilder: (context, index) => Container(
+                    itemBuilder: (context, index) {
+                      return Container(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Text(
                         '${snapshot.data?[index].firstName} ${snapshot.data?[index].lastName}',
                       ),
-                    ),
-                  );
+                    );}
+                  ): const Text('لا يوجد مشتركين');
                 } else {
-                  return const Text('no data');
+                  return const Text('no users');
                 }
               },
             ),

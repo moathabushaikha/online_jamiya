@@ -4,9 +4,7 @@ import 'managers.dart';
 import 'package:online_jamiya/models/models.dart';
 
 class NotificationManager extends ChangeNotifier {
-  final AppCache _appCache = AppCache();
-  final SqlService sqlService = SqlService();
-  final ApiService apiService = ApiService();
+  ApiMongoDb apiMongoDb = ApiMongoDb();
   List<MyNotification>? _notifications;
 
   List<MyNotification> get notifications {
@@ -17,11 +15,6 @@ class NotificationManager extends ChangeNotifier {
     }
   }
 
-  Future<void> setNotifications(List<MyNotification> notificationsList) async {
-    _notifications = notificationsList;
-    _appCache.setNotificationsList(notificationsList);
-  }
-
   MyNotification? notificationItemById(String id) {
     final index = _notifications?.indexWhere((element) => element.id == id);
     if (index == -1) return null;
@@ -29,26 +22,24 @@ class NotificationManager extends ChangeNotifier {
   }
 
   void addNotification(MyNotification notification) async {
-    // int newNotificationId = await sqlService.createNotification(notification);
-    // MyNotification newNotification =
-    //    await sqlService.readSingleNotification(newNotificationId.toString());
-    MyNotification newNotification =  await apiService.createNotification(notification);
-    _notifications?.add(newNotification);
-    if (_notifications != null) {
-      _appCache.setNotificationsList(_notifications!);
+    var mongoResult = await apiMongoDb.createNotification(notification);
+    if (mongoResult != null) {
+      MyNotification mongodbNotification = mongoResult;
+      _notifications?.add(mongodbNotification);
       notifyListeners();
     }
   }
-  Future <List<MyNotification>?> getAllNotification() async{
-    _notifications = await apiService.getAllNotifications();
+
+  Future<List<MyNotification>?> getAllNotification() async {
+    _notifications = await apiMongoDb.getAllNotifications();
     return _notifications;
   }
+
   void deleteNotification(MyNotification? myNotification) async {
     _notifications?.removeWhere((element) => element == myNotification);
     if (myNotification != null) {
-      await apiService.deleteNotification(myNotification);
+      await apiMongoDb.deleteNotification(myNotification);
     }
-    await _appCache.setNotificationsList(_notifications!);
     notifyListeners();
   }
 }

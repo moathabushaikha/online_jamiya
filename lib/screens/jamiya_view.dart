@@ -21,9 +21,16 @@ class JamiyaView extends StatefulWidget {
 }
 
 class _JamiyaViewState extends State<JamiyaView> {
+  AppCache appCache = AppCache();
+  User? currentUser;
+  @override
+  void initState() {
+    getCurrentUser();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    widget.manager.getJamiyat();
+    widget.manager.getJamiyat(currentUser);
     String formattedSDate = DateFormat('dd/MM/yy').format(DateTime.now());
     String formattedEDate = DateFormat('dd/MM/yy').format(DateTime.now());
     int participants = 1;
@@ -88,5 +95,12 @@ class _JamiyaViewState extends State<JamiyaView> {
             ),
           ],
         ));
+  }
+
+  void getCurrentUser() async{
+    User? cu = await appCache.getCurrentUser();
+    setState(() {
+      currentUser = cu;
+    });
   }
 }

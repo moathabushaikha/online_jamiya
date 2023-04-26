@@ -9,14 +9,14 @@ class JamiyaThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var x = jamiya?.participantsId.length as int;
-    var y = jamiya?.shareAmount as int;
-    int jamiyaAmount = x * y;
+    int quantity = jamiya?.participantsId.length as int;
+    int sharedAmount = jamiya?.shareAmount as int;
+    int totalAmount = quantity * sharedAmount;
     DateTime? startDate = jamiya?.startingDate;
     String formattedSDate = DateFormat('dd/MM/yyyy').format(startDate!);
     String formattedEDate = DateFormat('dd/MM/yyyy').format(jamiya!.endingDate);
     return Container(
-      padding: const EdgeInsets.only(left: 8,right: 5),
+      padding: const EdgeInsets.only(left: 8, right: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
@@ -38,7 +38,7 @@ class JamiyaThumbnail extends StatelessWidget {
             style: Theme.of(context).textTheme.headline3,
           ),
           Text(
-            'Total Amount: $jamiyaAmount',
+            'Total Amount: $totalAmount',
             style: Theme.of(context).textTheme.bodyText2,
           ),
           Text(

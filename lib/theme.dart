@@ -76,7 +76,7 @@ class JamiyaTheme {
   static ThemeData light() {
     return ThemeData(
       scaffoldBackgroundColor: Colors.white,
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.green[50],
       brightness: Brightness.light,
       checkboxTheme: CheckboxThemeData(
         fillColor: MaterialStateColor.resolveWith(
@@ -95,19 +95,17 @@ class JamiyaTheme {
       textTheme: lightTextTheme,
       buttonTheme: const ButtonThemeData(buttonColor: Colors.green),
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ButtonStyle(
-          padding: const MaterialStatePropertyAll(EdgeInsets.all(25)),
-          elevation: const MaterialStatePropertyAll(12.0),
-          backgroundColor:
-          const MaterialStatePropertyAll(Colors.blue),
-          shape: MaterialStateProperty.all(
-            const CircleBorder(
-              side: BorderSide(
-                color: Colors.white54,
-                width: 3,
-              ),
-            ),
-          ),),
+        style: ElevatedButton.styleFrom(
+          side: const BorderSide(width: 2),
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(color: Colors.black),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 10,
+          textStyle: const TextStyle(color: Colors.black),
+          backgroundColor: Colors.green[50],
+          foregroundColor: Colors.black,
+        ),
       ),
     );
   }
@@ -131,8 +129,7 @@ class JamiyaTheme {
         style: ButtonStyle(
           padding: const MaterialStatePropertyAll(EdgeInsets.all(20)),
           elevation: const MaterialStatePropertyAll(12.0),
-          backgroundColor:
-          const MaterialStatePropertyAll(Colors.indigo),
+          backgroundColor: const MaterialStatePropertyAll(Colors.indigo),
           shape: MaterialStateProperty.all(
             const CircleBorder(
               side: BorderSide(
@@ -140,7 +137,8 @@ class JamiyaTheme {
                 width: 3,
               ),
             ),
-          ),),
+          ),
+        ),
       ),
     );
   }
