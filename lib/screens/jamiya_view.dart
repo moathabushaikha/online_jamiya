@@ -30,12 +30,11 @@ class _JamiyaViewState extends State<JamiyaView> {
   }
   @override
   Widget build(BuildContext context) {
-    widget.manager.getJamiyat(currentUser);
     String formattedSDate = DateFormat('dd/MM/yy').format(DateTime.now());
     String formattedEDate = DateFormat('dd/MM/yy').format(DateTime.now());
     int participants = 1;
     Jamiya selectedJamiya =
-        widget.manager.jamiyaItems[widget.selectedJamiyaIndex-1];
+        widget.manager.jamiyaItems[widget.selectedJamiyaIndex];
 
     DateTime sDate = selectedJamiya.startingDate;
     formattedSDate = DateFormat('dd/MM/yy').format(sDate);
@@ -43,33 +42,43 @@ class _JamiyaViewState extends State<JamiyaView> {
     formattedEDate = DateFormat('dd/MM/yy').format(eDate);
     participants = int.parse('${selectedJamiya.participantsId.length}');
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          Center(
-              child: Text(
-            'معلومات الجمعية',
-            style: Theme.of(context).textTheme.headline1,
-          )),
-          Expanded(
-            child: ListView(
-              children: [
-                buildDataContainer('رقم الجمعية', selectedJamiya.id),
-                buildDataContainer('اسم الجمعية', selectedJamiya.name),
-                buildDataContainer(
-                    'المشتركين الجمعية', selectedJamiya.participantsId),
-                buildDataContainer(
-                    'قيمة السهم الجمعية', selectedJamiya.shareAmount),
-                buildDataContainer('تبدأ في', formattedSDate),
-                buildDataContainer('تنتهي في', formattedEDate),
-                buildDataContainer('انشات عن طريق', selectedJamiya.creatorId),
-                buildDataContainer(
-                    'قيمة الجمعية', selectedJamiya.shareAmount * participants),
-              ],
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [Color.fromRGBO(200, 120, 100, 1), Colors.white]
+          )
+      ),
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Column(
+          children: [
+            Center(
+                child: Text(
+              'معلومات الجمعية',
+              style: Theme.of(context).textTheme.headline1,
+            )),
+            Expanded(
+              child: ListView(
+                children: [
+                  buildDataContainer('رقم الجمعية', selectedJamiya.id),
+                  buildDataContainer('اسم الجمعية', selectedJamiya.name),
+                  buildDataContainer(
+                      'المشتركين الجمعية', selectedJamiya.participantsId),
+                  buildDataContainer(
+                      'قيمة السهم الجمعية', selectedJamiya.shareAmount),
+                  buildDataContainer('تبدأ في', formattedSDate),
+                  buildDataContainer('تنتهي في', formattedEDate),
+                  buildDataContainer('انشات عن طريق', selectedJamiya.creatorId),
+                  buildDataContainer(
+                      'قيمة الجمعية', selectedJamiya.shareAmount * participants),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

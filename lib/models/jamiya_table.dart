@@ -19,4 +19,5 @@ class JamiyaTable {
   static const String participantsId = "participantsId";
   static const String creatorId = "creatorId";
   static const String shareAmount = "shareAmount";
+  static const String paymentDates = "paymentDates";
 }

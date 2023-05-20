@@ -19,129 +19,144 @@ class _RegisterUserState extends State<RegisterUser> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Form(
-        key: formKey,
-        child: ListView(
-          children: <Widget>[
-            const SizedBox(
-              height: 16,
-            ),
-            // user name
-            TextFormField(
-              decoration:
-                  const InputDecoration(border: OutlineInputBorder(), labelText: 'User Name'),
-              onSaved: (value) {
-                setState(() {
-                  userName = value!;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter user name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            // first name
-            TextFormField(
-              decoration:
-                  const InputDecoration(border: OutlineInputBorder(), labelText: 'First Name'),
-              onSaved: (value) {
-                setState(() {
-                  firstName = value!;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please first name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            // last name
-            TextFormField(
-              decoration:
-                  const InputDecoration(border: OutlineInputBorder(), labelText: 'Last Name'),
-              onSaved: (value) {
-                setState(() {
-                  lastName = value!;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter last name';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            // password
-            TextFormField(
-              obscureText: true,
-              decoration:
-                  const InputDecoration(border: OutlineInputBorder(), labelText: 'Password'),
-              onSaved: (value) {
-                setState(() {
-                  password = value!;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty || value.length < 6) {
-                  return 'password cannot be empty or shorter than 6 characters ';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            SwitchListTile(
-              value: isDark,
-              onChanged: (val) {
-                setState(() {
-                  isDark = val;
-                });
-              },
-              title: const Text('Dark mode'),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            OutlinedButton(
-              onPressed: () async {
-                final isValid = formKey.currentState?.validate();
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [Color.fromRGBO(200, 120, 100, 1), Colors.white]
+          )
+      ),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('User Registration'),
+        ),
+        body: Form(
+          key: formKey,
+          child: ListView(
+            children: <Widget>[
+              const SizedBox(
+                height: 16,
+              ),
+              // user name
+              TextFormField(
+                decoration:
+                    const InputDecoration(border: OutlineInputBorder(), labelText: 'User Name'),
+                onSaved: (value) {
+                  setState(() {
+                    userName = value!;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter user name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              // first name
+              TextFormField(
+                decoration:
+                    const InputDecoration(border: OutlineInputBorder(), labelText: 'First Name'),
+                onSaved: (value) {
+                  setState(() {
+                    firstName = value!;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please first name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              // last name
+              TextFormField(
+                decoration:
+                    const InputDecoration(border: OutlineInputBorder(), labelText: 'Last Name'),
+                onSaved: (value) {
+                  setState(() {
+                    lastName = value!;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter last name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              // password
+              TextFormField(
+                obscureText: true,
+                decoration:
+                    const InputDecoration(border: OutlineInputBorder(), labelText: 'Password'),
+                onSaved: (value) {
+                  setState(() {
+                    password = value!;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty || value.length < 6) {
+                    return 'password cannot be empty or shorter than 6 characters ';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              SwitchListTile(
+                value: isDark,
+                onChanged: (val) {
+                  setState(() {
+                    isDark = val;
+                  });
+                },
+                title: const Text('Dark mode'),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              OutlinedButton(
+                onPressed: () async {
+                  final isValid = formKey.currentState?.validate();
 
-                if (isValid!) {
-                  formKey.currentState?.save();
-                  final String? key = Security.generatePassword(true, true, true, true, 32);
-                  final String? iv = Security.generatePassword(true, true, true, true, 16);
-                  String? encryptedPassword = password.encryptMyData(key!, iv!);
+                  if (isValid!) {
+                    formKey.currentState?.save();
+                    final String? key = Security.generatePassword(true, true, true, true, 32);
+                    final String? iv = Security.generatePassword(true, true, true, true, 16);
+                    String? encryptedPassword = password.encryptMyData(key!, iv!);
 
-                  User user = User('-1',
-                      userName: userName,
-                      firstName: firstName,
-                      lastName: lastName,
-                      password: encryptedPassword,
-                      darkMode: isDark,
-                      registeredJamiyaID: [],
-                      imgUrl: '');
-                  Provider.of<ProfileManager>(context, listen: false).setUserDarkMode(user);
-                  Provider.of<AppStateManager>(context, listen: false).register(user,key,iv,context);
-                }
-              },
-              child: const Text('Register New User'),
-            ),
-          ],
+                    User user = User('-1',
+                        userName: userName,
+                        firstName: firstName,
+                        lastName: lastName,
+                        password: encryptedPassword,
+                        darkMode: isDark,
+                        registeredJamiyaID: [],
+                        imgUrl: '',
+                        key: key,
+                        iv: iv);
+                    Provider.of<ProfileManager>(context, listen: false).setUserDarkMode(user.darkMode);
+                    Provider.of<AppStateManager>(context, listen: false)
+                        .register(user, context);
+                  }
+                },
+                child: const Text('Register New User'),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,12 @@
 export 'main_image_holder.dart';
-export 'registered_jamiya_gridview.dart';
 export 'jamiya_thumbnail.dart';
 export 'participants_list_view.dart';
 export 'notificationListView.dart';
 export 'explore_jamiya_thumbnail.dart';
+export 'created_jamiya_listview.dart';
+export 'jamiya_list_view.dart';
+export 'change_participants_order.dart';
+export 'jamiya_schedule.dart';
+export 'edit_my_jamiya.dart';
+export 'registered_jamiya_listview.dart';
+export 'payment_page.dart';

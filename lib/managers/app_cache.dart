@@ -1,9 +1,9 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:online_jamiya/models/models.dart';
 
-class AppCache {
+class AppCache extends ChangeNotifier{
   static const kUser = 'user';
   static const currentUser = 'currentUser';
   static const allJamiyas = 'jamiyaItems';
@@ -20,6 +20,7 @@ class AppCache {
     final prefs = await SharedPreferences.getInstance();
     String? loggedInUserJson = prefs.getString(currentUser);
     loggedInUser = userFromJsonSharedPrefs(loggedInUserJson!);
+    print('luDM ${loggedInUser?.darkMode}');
     return loggedInUser;
   }
   Future<void> setToken(String resBody)async {
@@ -30,7 +31,6 @@ class AppCache {
   Future<void> invalidate() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(kUser, false);
-    await prefs.clear();
   }
 
   Future<bool> isUserLoggedIn() async {

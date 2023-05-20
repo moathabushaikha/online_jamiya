@@ -37,22 +37,22 @@ class JamiyaTheme {
 
   static TextTheme darkTextTheme = TextTheme(
     bodyText1: GoogleFonts.openSans(
-      color: Colors.indigo[200],
+      color: Colors.indigo[50],
       fontSize: 16,
       fontWeight: FontWeight.w700,
     ),
     bodyText2: GoogleFonts.openSans(
-      color: Colors.indigo[400],
-      fontSize: 15,
+      color: Colors.indigo[50],
+      fontSize: 8,
       fontWeight: FontWeight.w700,
     ),
     headline1: GoogleFonts.openSans(
-      color: Colors.indigo[400],
-      fontSize: 32.0,
+      color: Colors.indigo[50],
+      fontSize: 26.0,
       fontWeight: FontWeight.bold,
     ),
     headline2: GoogleFonts.openSans(
-      fontSize: 21.0,
+      fontSize: 18.0,
       fontWeight: FontWeight.w700,
       color: Colors.white,
     ),
@@ -75,8 +75,6 @@ class JamiyaTheme {
 
   static ThemeData light() {
     return ThemeData(
-      scaffoldBackgroundColor: Colors.white,
-      backgroundColor: Colors.green[50],
       brightness: Brightness.light,
       checkboxTheme: CheckboxThemeData(
         fillColor: MaterialStateColor.resolveWith(
@@ -87,7 +85,6 @@ class JamiyaTheme {
       ),
       appBarTheme: const AppBarTheme(
         foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         selectedItemColor: Colors.green,
@@ -103,7 +100,7 @@ class JamiyaTheme {
           ),
           elevation: 10,
           textStyle: const TextStyle(color: Colors.black),
-          backgroundColor: Colors.green[50],
+          backgroundColor: const Color.fromRGBO(255, 255, 255, 0.1),
           foregroundColor: Colors.black,
         ),
       ),
@@ -113,8 +110,6 @@ class JamiyaTheme {
   static ThemeData dark() {
     return ThemeData(
       cardColor: Colors.grey.shade800,
-      scaffoldBackgroundColor: Colors.grey[900],
-      backgroundColor: Colors.black26,
       brightness: Brightness.dark,
       appBarTheme: AppBarTheme(
         foregroundColor: Colors.white,
@@ -126,18 +121,14 @@ class JamiyaTheme {
       ),
       textTheme: darkTextTheme,
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ButtonStyle(
-          padding: const MaterialStatePropertyAll(EdgeInsets.all(20)),
-          elevation: const MaterialStatePropertyAll(12.0),
-          backgroundColor: const MaterialStatePropertyAll(Colors.indigo),
-          shape: MaterialStateProperty.all(
-            const CircleBorder(
-              side: BorderSide(
-                color: Colors.white54,
-                width: 3,
-              ),
-            ),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(color: Colors.white),
+            borderRadius: BorderRadius.circular(16),
           ),
+          elevation: 10,
+          textStyle: const TextStyle(color: Colors.white),
+          backgroundColor: const Color.fromRGBO(100, 150, 255, 0.3),
         ),
       ),
     );

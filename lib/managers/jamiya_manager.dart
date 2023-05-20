@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mongo_dart/mongo_dart.dart';
 import 'package:online_jamiya/api/api.dart';
 import 'package:online_jamiya/models/models.dart';
 
@@ -16,61 +15,36 @@ class JamiyaManager extends ChangeNotifier {
     }
   }
 
-  Future<List<Jamiya>?> getJamiyat(User? currentUser) async {
-    _jamiyaItems = await apiService.getAllJamiyas();
-    return _jamiyaItems;
+  Future<List<Jamiya>> getJamiyat() async {
+    return _jamiyaItems = await apiMongoDb.getAllJamiyas();
   }
-  void setJamiyatItem() async {
-    _jamiyaItems = await apiMongoDb.getAllJamiyas();
-  }
-  void deleteJamiyaItem(int index) async {
-    jamiyaItems.removeAt(index);
-    // await sqlService.deleteJamiya((index + 1).toString());
-    //TODO delete jamiya from mongooDb
+
+  void deleteJamiyaItem(Jamiya? jamiya) async {
+    jamiyaItems.removeWhere((element) => element == jamiya!);
+    await apiMongoDb.deleteJamiya(jamiya);
     notifyListeners();
   }
 
-  void addJamiyaItem(Jamiya item, BuildContext context) async {
+  Future<Jamiya?> addJamiyaItem(Jamiya item) async {
     Map<String, Object?>? newJamiya = await apiMongoDb.createJamiya(item);
-    if (newJamiya == null){
-      buildDialog(context,'The jamiya name already exist');
+    if (newJamiya == null) {
+      return null;
     }
-    else
-      {
-        Jamiya? jamiya = Jamiya.fromMap(newJamiya);
-        _jamiyaItems?.add(jamiya);
-        notifyListeners();
-      }
+    Jamiya? jamiya = Jamiya.fromMap(newJamiya);
+    _jamiyaItems?.add(jamiya);
+    notifyListeners();
+    return jamiya;
   }
-
+  Future<List<Jamiya>> getRegisteredJamias(User? user) async{
+    List<Jamiya> registeredJamiyas = await apiMongoDb.getUserRegisteredJamiyas(user);
+    notifyListeners();
+    return registeredJamiyas;
+  }
   Future<void> updateItem(Jamiya jamiyaItem) async {
     int index = 0;
     index = _jamiyaItems?.indexWhere((element) => jamiyaItem.id == element.id) ?? 0;
     Jamiya updatedJamiya = await apiMongoDb.updateJamiya(jamiyaItem);
     _jamiyaItems?[index] = updatedJamiya;
     notifyListeners();
-  }
-
-  void buildDialog(BuildContext context, String msg) {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Authentication Error'),
-          content: SingleChildScrollView(
-            child: Text(msg),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Retry'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }

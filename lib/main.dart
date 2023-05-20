@@ -10,22 +10,23 @@ void main() async {
   final appStateManager = AppStateManager();
   await appStateManager.initializeApp();
   await DataBaseConn.instance.getToken();
-  runApp(Jamiya(appStateManager: appStateManager));
+  runApp(JamiyaOnline(appStateManager: appStateManager));
 }
 
-class Jamiya extends StatefulWidget {
+class JamiyaOnline extends StatefulWidget {
   final appStateManager = AppStateManager();
 
-  Jamiya({Key? key, required appStateManager}) : super(key: key);
+  JamiyaOnline({Key? key, required appStateManager}) : super(key: key);
 
   @override
-  State<Jamiya> createState() => _JamiyaState();
+  State<JamiyaOnline> createState() => _JamiyaOnlineState();
 }
 
-class _JamiyaState extends State<Jamiya> {
+class _JamiyaOnlineState extends State<JamiyaOnline> {
   final _profileManager = ProfileManager();
   final _jamiyaManager = JamiyaManager();
   final notificationManager = NotificationManager();
+  final _appcache = AppCache();
   late final _appRouter = AppRouter(widget.appStateManager, _profileManager,
       _jamiyaManager, notificationManager);
 
@@ -44,6 +45,9 @@ class _JamiyaState extends State<Jamiya> {
         ),
         ChangeNotifierProvider(
           create: (context) => notificationManager,
+        ),
+        ChangeNotifierProvider(
+          create: (context) => _appcache,
         ),
       ],
       child: Consumer<ProfileManager>(

@@ -56,15 +56,20 @@ class Jamiya {
 
   factory Jamiya.fromMap(Map<String, dynamic> json) {
     List<dynamic> _participantsId = json[JamiyaTable.participantsId];
+    List<String> users = [];
+    for (var i = 0; i<_participantsId.length;i++)
+      {
+        users.add(_participantsId[i]);
+      }
     return Jamiya(
-        json['_id'].$oid,
-        _participantsId.map((e) => e.toString()).toList(),
-        name: json[JamiyaTable.name],
-        startingDate: json[JamiyaTable.startingDate],
-        endingDate: json[JamiyaTable.endingDate],
-        maxParticipants: json[JamiyaTable.maxParticipants],
-        creatorId: json[JamiyaTable.creatorId],
-        shareAmount: json[JamiyaTable.shareAmount],
+      json['_id'].$oid,
+      users,
+      name: json[JamiyaTable.name],
+      startingDate: json[JamiyaTable.startingDate],
+      endingDate: json[JamiyaTable.endingDate],
+      maxParticipants: json[JamiyaTable.maxParticipants],
+      creatorId: json[JamiyaTable.creatorId],
+      shareAmount: json[JamiyaTable.shareAmount],
     );
   }
 }

@@ -27,6 +27,7 @@ class _MainImageHolderState extends State<MainImageHolder> {
         fileImage = imageTemp;
         widget.currentUser?.imgUrl = image.path;
         Provider.of<AppStateManager>(context, listen: false).updateUser(widget.currentUser!);
+        Provider.of<AppCache>(context,listen: false).setCurrentUser(widget.currentUser!);
       });
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');
@@ -41,7 +42,7 @@ class _MainImageHolderState extends State<MainImageHolder> {
         Consumer<AppStateManager>(
           builder: (context, appStateManager, child) {
             return Container(
-                width: double.infinity, height: 205, color: Theme.of(context).backgroundColor);
+                width: double.infinity, height: 205,);
           },
         ),
         Positioned(
@@ -54,7 +55,7 @@ class _MainImageHolderState extends State<MainImageHolder> {
               margin: const EdgeInsets.only(top: 10,bottom: 10),
               padding: const EdgeInsets.only(bottom: 10),
               decoration: BoxDecoration(
-                image: DecorationImage(
+                image: DecorationImage(fit: BoxFit.cover,
                   image: widget.currentUser?.imgUrl != ""
                       ? FileImage(widget.currentUser != null
                           ? File(widget.currentUser?.imgUrl as String)
@@ -76,7 +77,7 @@ class _MainImageHolderState extends State<MainImageHolder> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Welcome'),
+              Text('Welcome', style:Theme.of(context).textTheme.headline3),
               Text(
                 '${widget.currentUser?.firstName} ${widget.currentUser?.lastName}',
                 style: Theme.of(context).textTheme.headline3,

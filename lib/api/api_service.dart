@@ -151,7 +151,6 @@ class ApiService {
   Future<List<User>> getJamiyaRegisteredUsers(Jamiya? selectedJamiya) async {
     List<User> users = [];
     for (var i = 0; i < selectedJamiya!.participantsId.length; i++) {
-     // print(selectedJamiya!.participantsId[i]);
       String userId = selectedJamiya.participantsId[i];
       User user = await getUserById(userId);
       users.add(user);

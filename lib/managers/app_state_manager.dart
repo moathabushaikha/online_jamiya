@@ -27,8 +27,8 @@ class AppStateManager extends ChangeNotifier {
     _loggedIn = await _appCache.isUserLoggedIn();
   }
 
-  void register(User newUser, String? key, String? iv, BuildContext context) async {
-    bool userAdded = await apiMongoDb.createUser(newUser, key, iv);
+  void register(User newUser, BuildContext context) async {
+    bool userAdded = await apiMongoDb.createUser(newUser);
     String registrationMsg = '';
     if (userAdded) {
       registrationMsg = "go to login";
@@ -58,30 +58,15 @@ class AppStateManager extends ChangeNotifier {
     );
   }
 
-  void login(String username, String password, BuildContext context) async {
-    switch (await apiMongoDb.signInUser(username, password)) {
-      case 1:
-        {
-          buildDialog(context, 'Wrong user name check again');
-          break;
-        }
-      case 2:
-        {
-          buildDialog(context, 'Wrong password check again');
-          break;
-        }
-      case 3:
-        {
-          buildDialog(context, 'This device is not registered please reset your password or create new user');
-          break;
-        }
-      default:
-        {
-          _loggedIn = true;
-          notifyListeners();
-          break;
-        }
-    }
+  Future<int> login(String username, String password) async {
+    int loginResult = await apiMongoDb.signInUser(username, password);
+    if (loginResult == 0)
+      {
+        _loggedIn = true;
+        notifyListeners();
+        return loginResult;
+      }
+      return loginResult;
   }
 
   void goToTab(index) {
@@ -91,7 +76,6 @@ class AppStateManager extends ChangeNotifier {
 
   Future<void> updateUser(User user) async {
     await apiMongoDb.updateUser(user);
-    // _appCache.setCurrentUser(user);
     notifyListeners();
   }
 
@@ -103,28 +87,5 @@ class AppStateManager extends ChangeNotifier {
     await _appCache.invalidate();
     await initializeApp();
     notifyListeners();
-  }
-
-  void buildDialog(BuildContext context, String msg) {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Authentication Error'),
-          content: SingleChildScrollView(
-            child: Text(msg),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Retry'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }

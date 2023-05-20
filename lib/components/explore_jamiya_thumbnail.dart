@@ -41,17 +41,22 @@ class ExploreJamiyaThumbnail extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline2,
               ),
             ),
-            FutureBuilder(
-              future: apiMongoDb.getUserById(jamiya!.creatorId!),
-              builder: (context, snapshot) => snapshot.connectionState == ConnectionState.waiting
-                  ? const Text('fetching creator name')
-                  : Row(
-                      children: [
-                        const Text('Created By: '),
-                        Text('${snapshot.data?.firstName} '),
-                        Text('${snapshot.data?.lastName}'),
-                      ],
-                    ),
+            Container(
+              padding: const EdgeInsets.all(5),
+              child: FutureBuilder(
+                future: apiMongoDb.getUserById(jamiya!.creatorId!),
+                builder: (context, snapshot) => snapshot.connectionState == ConnectionState.waiting
+                    ? const Text('fetching creator name')
+                    : Row(
+                        children: [
+                          const Text('Creator: '),
+                          Text('${snapshot.data?.firstName} ',
+                              style: Theme.of(context).textTheme.bodyText2,),
+                          Text('${snapshot.data?.lastName}',
+                            style: Theme.of(context).textTheme.bodyText2,),
+                        ],
+                      ),
+              ),
             ),
             Text(
               'Shared Amount: ${jamiya?.shareAmount} JD',
@@ -79,7 +84,6 @@ class ExploreJamiyaThumbnail extends StatelessWidget {
                   onPressed: () async {
                     // check if the user is not already enrolled in the jamiya
                     if (jamiya!.participantsId.contains(currentUser?.id)) {
-                      print('h1');
                       messageDialog('Enroll Control', 'you already enrolled', context);
                       return;
                     }

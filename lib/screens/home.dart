@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -20,19 +21,26 @@ class _HomeState extends State<Home> {
   JamiyaManager manager = JamiyaManager();
   ApiMongoDb apiMongoDb = ApiMongoDb();
   AppCache appCache = AppCache();
+  User? currentUser;
+
+  @override
+  void initState() {
+    getCurrentUser();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     List<Widget> pages = <Widget>[
-      const MainScreen(),
-      const ExploreScreen(),
-      // Consumer<JamiyaManager>(builder: (context, manager, child) => const ExploreScreen()),
+      Consumer<JamiyaManager>(builder: (context, manager, child) => const MainScreen()),
+      //const ExploreScreen(),
+      Consumer<JamiyaManager>(builder: (context, manager, child) => const ExploreScreen()),
     ];
 
     return Scaffold(
       appBar: AppBar(
         actions: [
-         notification(widget.currentTab),
+          notification(widget.currentTab),
           const SizedBox(width: 10),
           Consumer<AppStateManager>(
             builder: (context, value, child) => profileButton(widget.currentTab),
@@ -74,21 +82,17 @@ class _HomeState extends State<Home> {
   }
 
   Widget profileButton(int currentTab) {
-    return FutureBuilder(
-      future: appCache.getCurrentUser(),
-      builder: (context, snapshot) => Padding(
-        padding: const EdgeInsets.only(right: 16.0),
-        child: GestureDetector(
-          child: const Center(
-            child: CircleAvatar(
-              backgroundColor: Colors.grey,
-              child: Icon(Icons.person),
-            ),
-          ),
-          onTap: () {
-            context.goNamed('profile', params: {'tab': '$currentTab'});
-          },
+    return Padding(
+      padding: const EdgeInsets.only(right: 16.0),
+      child: GestureDetector(
+        child: Center(
+          child: CircleAvatar(
+            backgroundColor: Colors.grey,
+            backgroundImage: currentUser != null ? Image.file(File(currentUser!.imgUrl),fit: BoxFit.contain,).image: null,),
         ),
+        onTap: () {
+          context.goNamed('profile', params: {'tab': '$currentTab'});
+        },
       ),
     );
   }
@@ -101,11 +105,10 @@ class _HomeState extends State<Home> {
         children: [
           const Text('Notifications'),
           const SizedBox(width: 10),
-          StreamBuilder(
-            stream: apiMongoDb.getCuNotStream(),
+          FutureBuilder(
+            future: apiMongoDb.getCUserNotifications(),
             builder: (context, AsyncSnapshot<List<MyNotification>?> snapshot) {
               if (snapshot.hasData) {
-                // print('here ${snapshot.data!.length}');
                 return Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -129,5 +132,16 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+
+  void getCurrentUser() async {
+    User? user = await appCache.getCurrentUser();
+    setState(() {
+      currentUser = user;
+      if (mounted && currentUser != null) {
+        Provider.of<ProfileManager>(context, listen: false)
+            .setUserDarkMode(currentUser!.darkMode);
+      }
+    });
   }
 }

@@ -38,13 +38,15 @@ dependencies:
   sqflite: ^2.1.0+1
   intl: ^0.17.0
   image_picker: ^0.8.6
-  cupertino_icons: ^1.0.2
   mongo_dart: ^0.8.2
   dart_encrypter: ^1.0.4
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.9.2
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -55,6 +57,12 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
+flutter_icons:
+  android: "online_jamiya"
+  ios: true
+  image_path: "assets/jamiya_assets/launcher_icon.png"
+
 
 # The following section is specific to Flutter packages.
 flutter:

@@ -18,6 +18,8 @@ class User {
   bool darkMode;
   List<String> registeredJamiyaID;
   String imgUrl;
+  String? key;
+  String? iv;
 
   User(this.id,
       {required this.userName,
@@ -26,7 +28,9 @@ class User {
       required this.password,
       required this.imgUrl,
       required this.registeredJamiyaID,
-      required this.darkMode});
+      required this.darkMode,
+      required this.key,
+      required this.iv});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = {
@@ -38,6 +42,8 @@ class User {
       UserTableCols.imgUrlCol: imgUrl,
       UserTableCols.darkModeCol: darkMode.toString(),
       UserTableCols.registeredJamiyaID: registeredJamiyaID.join(","),
+      UserTableCols.key: key,
+      UserTableCols.iv: iv
     };
     return map;
   }
@@ -51,35 +57,36 @@ class User {
       UserTableCols.imgUrlCol: imgUrl,
       UserTableCols.darkModeCol: darkMode.toString(),
       UserTableCols.registeredJamiyaID: registeredJamiyaID.join(","),
+      UserTableCols.key: key,
+      UserTableCols.iv: iv
     };
     return map;
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
     List<dynamic> registeredJamiyatList = map[UserTableCols.registeredJamiyaID];
-
-    return User(
-      map['_id'].$oid,
-      firstName: map[UserTableCols.firstNameCol],
-      lastName: map[UserTableCols.lastNameCol],
-      userName: map[UserTableCols.userNameCol],
-      password: map[UserTableCols.passwordCol],
-      imgUrl: map[UserTableCols.imgUrlCol],
-      darkMode: map[UserTableCols.darkModeCol] == 'false' ? false : true,
-      registeredJamiyaID: registeredJamiyatList.map((e) => e.toString()).toList(),
-    );
+    return User(map['_id'].$oid,
+        firstName: map[UserTableCols.firstNameCol],
+        lastName: map[UserTableCols.lastNameCol],
+        userName: map[UserTableCols.userNameCol],
+        password: map[UserTableCols.passwordCol],
+        imgUrl: map[UserTableCols.imgUrlCol],
+        darkMode: map[UserTableCols.darkModeCol],
+        registeredJamiyaID: registeredJamiyatList.map((e) => e.toString()).toList(),
+        key: map[UserTableCols.key],
+        iv: map[UserTableCols.iv]);
   }
 
   factory User.fromMapSharedPrefs(Map<String, dynamic> map) {
-    return User(
-      map['id'].toString(),
-      firstName: map[UserTableCols.firstNameCol],
-      lastName: map[UserTableCols.lastNameCol],
-      userName: map[UserTableCols.userNameCol],
-      password: map[UserTableCols.passwordCol],
-      imgUrl: map[UserTableCols.imgUrlCol],
-      darkMode: map[UserTableCols.darkModeCol] == 'false' ? false : true,
-      registeredJamiyaID: map[UserTableCols.registeredJamiyaID].split(','),
-    );
+    return User(map['id'].toString(),
+        firstName: map[UserTableCols.firstNameCol],
+        lastName: map[UserTableCols.lastNameCol],
+        userName: map[UserTableCols.userNameCol],
+        password: map[UserTableCols.passwordCol],
+        imgUrl: map[UserTableCols.imgUrlCol],
+        darkMode: map[UserTableCols.darkModeCol] == 'false' ? false : true,
+        registeredJamiyaID: map[UserTableCols.registeredJamiyaID].split(','),
+        key: map[UserTableCols.key],
+        iv: map[UserTableCols.iv]);
   }
 }

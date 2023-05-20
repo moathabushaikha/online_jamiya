@@ -10,7 +10,9 @@ class UserTableCols {
     imgUrlCol,
     darkModeCol,
     registeredJamiyaID,
-    token
+    token,
+    key,
+    iv
   ];
   static String idCol = 'id';
   static String firstNameCol = 'firstName';
@@ -21,4 +23,6 @@ class UserTableCols {
   static String darkModeCol = 'darkMode';
   static String registeredJamiyaID = 'registeredJamiyaID';
   static String token = 'token';
+  static String key = 'key';
+  static String iv = 'iv';
 }

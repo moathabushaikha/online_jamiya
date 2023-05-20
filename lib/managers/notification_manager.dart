@@ -21,7 +21,7 @@ class NotificationManager extends ChangeNotifier {
     return _notifications![index!];
   }
 
-  void addNotification(MyNotification notification) async {
+  Future<void> addNotification(MyNotification notification) async {
     var mongoResult = await apiMongoDb.createNotification(notification);
     if (mongoResult != null) {
       MyNotification mongodbNotification = mongoResult;
@@ -30,13 +30,10 @@ class NotificationManager extends ChangeNotifier {
     }
   }
 
-  Future<List<MyNotification>?> getAllNotification() async {
-    _notifications = await apiMongoDb.getAllNotifications();
-    return _notifications;
-  }
-
-  void deleteNotification(MyNotification? myNotification) async {
-    _notifications?.removeWhere((element) => element == myNotification);
+  Future<void> deleteNotification(MyNotification? myNotification) async {
+    _notifications?.removeWhere((element) {
+      return element.id.toString() == myNotification?.id.toString();
+    });
     if (myNotification != null) {
       await apiMongoDb.deleteNotification(myNotification);
     }

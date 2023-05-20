@@ -1,33 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'components.dart';
 
-class RegisteredJamiyaGridView extends StatelessWidget {
-  const RegisteredJamiyaGridView(
-      {Key? key, required this.userRegisteredJamiyas})
-      : super(key: key);
+class CreatedJamiyaList extends StatelessWidget {
+  const CreatedJamiyaList({Key? key, required this.userRegisteredJamiyas}) : super(key: key);
   final List<Jamiya>? userRegisteredJamiyas;
 
   @override
   Widget build(BuildContext context) {
     return userRegisteredJamiyas != null
-        ? GridView.builder(
+        ? ListView.builder(
+            scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               final jamiya = userRegisteredJamiyas?[index];
-              return JamiyaThumbnail(jamiya: jamiya);
+              return GestureDetector(
+                onTap: (){
+                  context.goNamed('editMyJamiya', params: {'tab':'0',},extra: jamiya);
+                },
+                  child: JamiyaThumbnail(jamiya: jamiya));
             },
             padding: const EdgeInsets.all(8),
             itemCount: userRegisteredJamiyas?.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 5,
-              mainAxisExtent: 125
-            ),
           )
         : Center(
             child: Text(
-              'لا يوجد لديك جمعيات مسجلة',
+              'لم تقم بإنشاء اي جمعية ',
               style: Theme.of(context).textTheme.headline2,
             ),
           );

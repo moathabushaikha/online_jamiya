@@ -47,13 +47,10 @@ class _JamiyasListViewState extends State<JamiyasListView> {
       ),
     );
   }
-
-
-
   void getCurrentUser() async {
     currentUser = await appCache.getCurrentUser();
     setState(() {
-      Provider.of<JamiyaManager>(context, listen: false).setJamiyatItem();
+      Provider.of<JamiyaManager>(context, listen: false).getJamiyat();
     });
   }
 

@@ -14,9 +14,9 @@ class ProfileManager extends ChangeNotifier {
     _darkMode = darkMode;
     notifyListeners();
   }
-  void setUserDarkMode(User user)async
+  void setUserDarkMode(bool userDarkMode)async
   {
-    _darkMode = user.darkMode;
+    _darkMode = userDarkMode;
     notifyListeners();
   }
 

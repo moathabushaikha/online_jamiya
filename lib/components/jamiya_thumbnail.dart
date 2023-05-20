@@ -17,6 +17,7 @@ class JamiyaThumbnail extends StatelessWidget {
     String formattedEDate = DateFormat('dd/MM/yyyy').format(jamiya!.endingDate);
     return Container(
       padding: const EdgeInsets.only(left: 8, right: 5),
+      margin: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         boxShadow: [

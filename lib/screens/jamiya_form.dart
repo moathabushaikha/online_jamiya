@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:online_jamiya/api/api.dart';
 import 'package:online_jamiya/models/models.dart';
 import 'package:go_router/go_router.dart';
 import 'package:online_jamiya/managers/managers.dart';
 import 'package:provider/provider.dart';
 
 class JamiyaForm extends StatefulWidget {
-  final Function(Jamiya) onCreate;
-  final int index;
-
-  const JamiyaForm({Key? key, required this.onCreate, this.index = -1}) : super(key: key);
+  const JamiyaForm({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<JamiyaForm> createState() => _JamiyaFormState();
@@ -21,6 +21,7 @@ class _JamiyaFormState extends State<JamiyaForm> {
   DateTime dateTimeFrom = DateTime.now();
   AppCache appCache = AppCache();
   User? currentUser;
+  ApiMongoDb apiMongoDb = ApiMongoDb();
 
   @override
   void initState() {
@@ -52,7 +53,7 @@ class _JamiyaFormState extends State<JamiyaForm> {
     }
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text('Create Jamiya'),),
       body: Center(
         child: ListView(
           children: [
@@ -115,7 +116,7 @@ class _JamiyaFormState extends State<JamiyaForm> {
                 child: const Text(
                   'create jamiya',
                 ),
-                onPressed: () {
+                onPressed: () async {
                   Jamiya newJamiya = Jamiya(
                     '1',
                     [],
@@ -126,8 +127,46 @@ class _JamiyaFormState extends State<JamiyaForm> {
                     creatorId: currentUser?.id,
                     shareAmount: int.parse(_shareAmount.text),
                   );
-                  widget.onCreate(newJamiya);
-                  context.goNamed('home', params: {'tab': '${JamiyaTabs.explore}'});
+                  Jamiya? createdJamiya = await Provider.of<JamiyaManager>(context, listen: false)
+                      .addJamiyaItem(newJamiya);
+                  if (createdJamiya == null) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Creating Jamiya'),
+                        content: const SingleChildScrollView(
+                          child: Text('A Jamiya with same name already exist'),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Edit')),
+                        ],
+                      ),
+                      barrierDismissible: true,
+                    );
+                  }
+                  if (mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Creating Jamiya'),
+                        content: const SingleChildScrollView(
+                          child: Text('Jamiya created successfully'),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                context.goNamed('home', params: {'tab': '${JamiyaTabs.explore}'});
+                              },
+                              child: const Text('go to Jamiyat')),
+                        ],
+                      ),
+                      barrierDismissible: true,
+                    );
+                  }
                 },
               ),
             ),
@@ -143,7 +182,6 @@ class _JamiyaFormState extends State<JamiyaForm> {
         firstDate: DateTime.now(),
         lastDate: DateTime.now().add(const Duration(days: 1000)),
       );
-
 
   void getCurrentUser() async {
     await appCache.getCurrentUser().then((value) => setState(() => currentUser = value));
